@@ -40,6 +40,25 @@ router.get('/', async (req, res) => {
   }
 })
 
+router.get('/player/:playerId', async (req, res) => {
+  try {
+    const { playerId } = req.params
+    
+    const request = await prisma.request.findFirst({
+      where: { playerId: parseInt(playerId) },
+      orderBy: { createdAt: 'desc' }
+    })
+    
+    if (!request) {
+      return res.status(404).json({ error: 'Aucune demande trouvée pour ce joueur' })
+    }
+    
+    res.json(request)
+  } catch (error) {
+    res.status(500).json({ error: 'Erreur lors de la récupération de la demande' })
+  }
+})
+
 // GET - Récupérer une demande par ID
 router.get('/:id', async (req, res) => {
   try {

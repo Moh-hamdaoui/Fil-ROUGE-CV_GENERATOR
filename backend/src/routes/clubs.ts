@@ -37,4 +37,30 @@ router.post('/', async (req, res) => {
   }
 })
 
+// POST /api/clubs/find-or-create
+router.post('/find-or-create', async (req, res) => {
+  try {
+    const { name } = req.body
+    if (!name) return res.status(400).json({ error: 'Le nom du club est requis' })
+
+    // Vérifier si le club existe déjà
+    let club = await prisma.club.findUnique({
+      where: { name },
+    })
+
+    if (!club) {
+      // Sinon, créer le club
+      club = await prisma.club.create({
+        data: { name },
+      })
+    }
+
+    res.json(club)
+  } catch (error) {
+    console.error('Erreur find-or-create club:', error)
+    res.status(500).json({ error: 'Erreur lors de la recherche/création du club' })
+  }
+})
+
+
 export default router

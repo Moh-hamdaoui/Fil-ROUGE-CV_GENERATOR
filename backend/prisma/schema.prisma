@@ -26,6 +26,9 @@ model Player {
   primaryPost    String
   secondaryPost  String?
   photo          String?
+  linkVideo      String?
+  linkStats      String?
+
   favoriteTactic String            @default("4-4-3")
 
   createdAt      DateTime          @default(now())
@@ -52,7 +55,7 @@ model Request {
 
 model Club {
   id          Int      @id @default(autoincrement())
-  name        String
+  name        String   @unique
   logo        String?
   foundedYear Int?
 
@@ -77,10 +80,20 @@ model Career {
   competition  String
   startDate    DateTime
   endDate      DateTime?
+  isInternationalPlayer  Boolean  @default(false)
+  aboutInternationalSelection  String?
+  internationalTeamName  String?
+  category    String?
+  isCaptain   Boolean  @default(false)
+  isChampionWinner  Boolean  @default(false)
+  nameOfChampionship  String?
 
   player       Player   @relation(fields: [playerId], references: [id], onDelete: Cascade)
   club         Club     @relation(fields: [clubId], references: [id], onDelete: Cascade)
   stats        Stats?   @relation
+  
+  clubLogo     String?    
+  competitionLogo String? 
 
   @@index([playerId])
   @@index([clubId])
@@ -92,8 +105,10 @@ model Stats {
   matches   Int     @default(0)
   goals     Int     @default(0)
   assists  Int     @default(0)
+  cleanSheet Int?
+  averagePlayingTime Int    @default(0)
 
-  career    Career @relation(fields: [careerId], references: [id])
+  career    Career @relation(fields: [careerId], references: [id], onDelete: Cascade)
 }
 
 model Formation {

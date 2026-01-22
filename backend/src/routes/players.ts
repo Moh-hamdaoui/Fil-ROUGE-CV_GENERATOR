@@ -7,7 +7,6 @@ import fs from 'fs'
 const router = express.Router()
 const prisma = new PrismaClient()
 
-// Configuration de multer pour l'upload
 const uploadDir = 'public/uploads/players'
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true })
@@ -39,7 +38,6 @@ const upload = multer({
   },
 })
 
-// Endpoint pour uploader la photo
 router.post('/:id/upload-photo', express.json({ limit: '5mb' }), async (req, res) => {
   try {
     const playerId = parseInt(req.params.id)
@@ -49,12 +47,10 @@ router.post('/:id/upload-photo', express.json({ limit: '5mb' }), async (req, res
       return res.status(400).json({ error: 'Aucune photo fournie' })
     }
 
-    // Vérifier que c'est du base64
     if (!photo.startsWith('data:image/')) {
       return res.status(400).json({ error: 'Format d\'image invalide' })
     }
 
-    // Mettre à jour la photo en base de données
     const player = await prisma.player.update({
       where: { id: playerId },
       data: { photo: photo },
@@ -73,7 +69,6 @@ router.post('/:id/upload-photo', express.json({ limit: '5mb' }), async (req, res
 
 module.exports = router
 
-// GET - Récupérer tous les joueurs
 router.get('/', async (req, res) => {
   try {
     const players = await prisma.player.findMany({
@@ -123,7 +118,6 @@ router.get('/:id', async (req, res) => {
   }
 })
 
-// POST - Créer un nouveau joueur avec une demande
 router.post('/', async (req, res) => {
   try {
     const data = req.body
@@ -143,7 +137,6 @@ router.post('/', async (req, res) => {
         vma: parseInt(data.vma),
         primaryPost: data.primaryPost,
         secondaryPost: data.secondaryPost || null,
-        photo: data.photo || null,
         requests: {
           create: {
             isTreated: false,
@@ -162,7 +155,6 @@ router.post('/', async (req, res) => {
   }
 })
 
-// PUT - Mettre à jour un joueur
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params
@@ -183,7 +175,8 @@ router.put('/:id', async (req, res) => {
         vma: data.vma ? parseInt(data.vma) : undefined,
         primaryPost: data.primaryPost,
         secondaryPost: data.secondaryPost,
-        photo: data.photo,
+        linkStats: data.linkStats,
+        linkVideo: data.linkVideo,
       },
     })
     
@@ -193,7 +186,6 @@ router.put('/:id', async (req, res) => {
   }
 })
 
-// DELETE - Supprimer un joueur
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params
