@@ -1,6 +1,7 @@
 import React from 'react'
-import { Document, Page, Text, View, Image, StyleSheet, Svg, Rect, Path, Circle, G, Line, Polygon } from '@react-pdf/renderer'
+import { Document, Page, Text, View, Image, StyleSheet, Svg, Rect, Path, Circle, G, Line, Ellipse, Link } from '@react-pdf/renderer'
 
+// ==================== STYLES ====================
 const styles = StyleSheet.create({
   page: {
     backgroundColor: '#FFFFFF',
@@ -11,799 +12,831 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: '#1E3A5F',
     padding: 15,
-    paddingBottom: 10,
+    paddingBottom: 12,
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    alignItems: 'center',
+    borderBottomWidth: 4,
+    borderBottomColor: '#DC2626',
   },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 10,
-    flex: 1,
-  },
-  flagContainer: {
-    marginRight: 6,
-    marginTop: 2,
-  },
-  headerText: {
-    flex: 1,
-  },
-  playerName: {
-    fontSize: 22,
+  headerFlag: { marginRight: 10 },
+  headerNameContainer: { flex: 1 },
+  headerName: {
+    fontSize: 26,
     fontWeight: 'bold',
-    textTransform: 'uppercase',
     color: '#FFFFFF',
-    marginBottom: 4,
+    textTransform: 'uppercase',
     letterSpacing: 1.5,
   },
-  playerPosition: {
+  headerPosition: {
     fontSize: 12,
     fontWeight: 'bold',
-    textTransform: 'uppercase',
-    color: '#FFFFFF',
-    letterSpacing: 0.5,
-    marginBottom: 2,
-  },
-  playerPositionSecondary: {
-    fontSize: 11,
     color: '#FFFFFF',
     textTransform: 'uppercase',
+    marginTop: 2,
   },
-  headerPhoto: {
-    width: 85,
-    height: 100,
+  headerPositionSecondary: {
+    fontSize: 10,
+    color: '#FFFFFF',
+    textTransform: 'uppercase',
+  },
+  contentContainer: { flexDirection: 'row', flex: 1 },
+  leftColumn: { width: '35%', backgroundColor: '#1E3A5F', padding: 15 },
+  rightColumn: { width: '65%', backgroundColor: '#FFFFFF', padding: 15 },
+  photoSection: { alignItems: 'center', marginBottom: 12 },
+  photoContainer: {
+    width: 110,
+    height: 130,
+    borderRadius: 8,
+    overflow: 'hidden',
     borderWidth: 3,
     borderColor: '#FFFFFF',
-    borderRadius: 6,
-    overflow: 'hidden',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#333',
   },
-  headerPhotoImage: {
-    width: '100%',
-    height: '100%',
-    objectFit: 'cover',
-  },
-  headerPhotoPlaceholder: {
-    width: '100%',
-    height: '100%',
-    backgroundColor: '#333333',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  footballFieldContainer: {
-    width: 100,
-    height: 70,
-    marginLeft: 10,
-  },
-  contentContainer: {
-    flexDirection: 'row',
-    flex: 1,
-  },
-  leftColumn: {
-    width: '32%',
-    backgroundColor: '#1E3A5F',
-    padding: 12,
-    paddingTop: 8,
-    color: '#FFFFFF',
-  },
-  rightColumn: {
-    width: '68%',
-    backgroundColor: '#FFFFFF',
-    padding: 12,
-    paddingTop: 8,
-    color: '#000000',
-  },
-  section: {
-    marginBottom: 12,
-  },
+  photoImage: { width: '100%', height: '100%', objectFit: 'cover' },
   sectionTitle: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    textTransform: 'uppercase',
-    marginBottom: 8,
-    color: '#FFFFFF',
-    letterSpacing: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  sectionTitleIcon: {
-    marginRight: 6,
-  },
-  sectionTitleRight: {
     fontSize: 13,
     fontWeight: 'bold',
-    textTransform: 'uppercase',
-    marginBottom: 10,
-    color: '#1E3A5F',
-    letterSpacing: 1,
-    borderBottomWidth: 3,
-    borderBottomColor: '#DC2626',
-    paddingBottom: 4,
-    textDecorationLine: 'underline',
-    textDecorationStyle: 'wavy',
-  },
-  profileItem: {
-    marginBottom: 5,
-    fontSize: 9,
     color: '#FFFFFF',
+    textTransform: 'uppercase',
+    marginBottom: 8,
     flexDirection: 'row',
     alignItems: 'center',
+    letterSpacing: 1,
   },
-  profileLabel: {
+  sectionTitleIcon: { marginRight: 6 },
+  sectionTitleRight: {
+    fontSize: 14,
     fontWeight: 'bold',
-    color: '#FFFFFF',
+    color: '#1E3A5F',
+    textTransform: 'uppercase',
+    marginBottom: 12,
+    paddingBottom: 6,
+    borderBottomWidth: 3,
+    borderBottomColor: '#DC2626',
+    letterSpacing: 1,
   },
-  profileValue: {
-    color: '#FFFFFF',
-  },
-  profileIcon: {
-    width: 12,
-    marginRight: 5,
-  },
+  // Badge international amélioré
   internationalBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    padding: 4,
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    paddingVertical: 5,
     paddingHorizontal: 8,
     borderRadius: 4,
-    marginTop: 6,
-    marginBottom: 8,
+    marginBottom: 10,
   },
   internationalText: {
-    fontSize: 9,
+    fontSize: 8,
     color: '#FFFFFF',
     marginLeft: 5,
+    fontWeight: 'bold',
   },
-  qualitiesList: {
-    marginTop: 4,
-  },
-  qualityItem: {
-    fontSize: 8,
-    marginBottom: 4,
-    color: '#FFFFFF',
-    paddingLeft: 8,
-  },
-  qualityBullet: {
-    color: '#FFFFFF',
-    marginRight: 4,
-  },
-  contactItem: {
-    marginBottom: 6,
-    fontSize: 8,
-    color: '#FFFFFF',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  contactIcon: {
-    marginRight: 5,
-  },
-  videoSection: {
-    marginTop: 8,
-    padding: 8,
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    borderRadius: 4,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  videoIcon: {
-    marginRight: 6,
-  },
-  videoText: {
-    fontSize: 8,
-    color: '#FFFFFF',
-  },
-  linkSection: {
-    marginTop: 6,
-    padding: 6,
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    borderRadius: 4,
-  },
+  profileSection: { marginBottom: 12 },
+  profileItem: { flexDirection: 'row', alignItems: 'center', marginBottom: 5 },
+  profileIcon: { width: 18, marginRight: 6 },
+  profileLabel: { fontSize: 8, color: '#FFFFFF', fontWeight: 'bold' },
+  profileValue: { fontSize: 8, color: '#FFFFFF' },
+  // Section liens - AMÉLIORÉE AVEC LIENS CLIQUABLES
+  linksSection: { marginBottom: 12 },
   linkItem: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    borderRadius: 4,
+    marginBottom: 5,
+  },
+  linkItemClickable: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    borderRadius: 4,
+    marginBottom: 5,
+  },
+  linkText: { fontSize: 7, color: '#FFFFFF', marginLeft: 5 },
+  linkTextClickable: { fontSize: 7, color: '#1E3A5F', marginLeft: 5, textDecoration: 'underline' },
+  // Qualités améliorées
+  qualitiesSection: { marginBottom: 12 },
+  qualityItem: { fontSize: 8, color: '#FFFFFF', marginBottom: 3, paddingLeft: 8 },
+  // Section Formation - NOUVELLE
+  formationSection: { marginBottom: 12 },
+  formationItem: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
     marginBottom: 4,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    paddingVertical: 4,
+    paddingHorizontal: 6,
+    borderRadius: 3,
   },
-  linkText: {
-    fontSize: 7,
-    color: '#FFFFFF',
-    marginLeft: 4,
+  formationYear: { fontSize: 7, color: '#FFFFFF', fontWeight: 'bold', width: 35 },
+  formationText: { fontSize: 7, color: '#FFFFFF', flex: 1 },
+  formationDiploma: { 
+    fontSize: 6, 
+    color: '#FCD34D', 
+    backgroundColor: 'rgba(252,211,77,0.2)',
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    borderRadius: 2,
   },
-  careerSection: {
-    marginBottom: 8,
-  },
+  // Contact plus haut
+  contactSection: { marginBottom: 12 },
+  contactItem: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
+  contactIcon: { marginRight: 6 },
+  contactText: { fontSize: 7, color: '#FFFFFF' },
+  // Career
   careerItem: {
-    marginBottom: 12,
+    marginBottom: 14,
     paddingBottom: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#E5E5E5',
   },
-  careerItemLast: {
-    marginBottom: 10,
-    paddingBottom: 0,
-    borderBottomWidth: 0,
-  },
+  careerItemLast: { marginBottom: 8, borderBottomWidth: 0 },
   careerHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 4,
   },
-  careerPeriodContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 3,
-  },
-  careerPeriodYear: {
-    fontSize: 13,
-    fontWeight: 'bold',
-    color: '#1E3A5F',
-  },
-  careerPeriodArrow: {
-    fontSize: 10,
+  careerInfo: { flex: 1 },
+  careerPeriod: { flexDirection: 'row', alignItems: 'center', marginBottom: 3 },
+  careerYear: { fontSize: 13, fontWeight: 'bold', color: '#1E3A5F' },
+  careerArrow: {
+    fontSize: 11,
     color: '#DC2626',
     marginHorizontal: 4,
-  },
-  careerClub: {
-    fontSize: 11,
     fontWeight: 'bold',
-    color: '#1E3A5F',
-    textTransform: 'uppercase',
   },
-  careerCompetitionRow: {
+  careerArrowContainer: {
+    marginHorizontal: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  careerClub: { fontSize: 11, fontWeight: 'bold', color: '#1E3A5F', marginLeft: 4 },
+  careerCompetition: {
     flexDirection: 'row',
     alignItems: 'center',
     flexWrap: 'wrap',
-    marginTop: 2,
-    marginBottom: 4,
+    marginTop: 3,
+    marginBottom: 5,
   },
   careerCompetitionText: {
     fontSize: 9,
     fontWeight: 'bold',
     color: '#DC2626',
-    marginRight: 6,
+    marginRight: 5,
   },
-  careerLogo: {
-    width: 40,
-    height: 40,
-    objectFit: 'contain',
-  },
+  careerLogo: { width: 40, height: 40, objectFit: 'contain' },
   careerLogoPlaceholder: {
     width: 40,
     height: 40,
     backgroundColor: '#F3F4F6',
     borderRadius: 4,
   },
-  careerInfo: {
-    flex: 1,
-  },
-  careerNotes: {
-    marginTop: 4,
-    marginBottom: 4,
-  },
-  careerNote: {
-    fontSize: 8,
-    color: '#374151',
-    marginBottom: 2,
-    paddingLeft: 8,
-  },
-  careerNoteBullet: {
-    color: '#1E3A5F',
-  },
-  // Badges
-  badgeContainer: {
+  // Badges de compétition/ligue - NOUVEAU STYLE
+  competitionBadgeContainer: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    alignItems: 'center',
     gap: 3,
-    marginBottom: 4,
+    marginLeft: 4,
   },
-  badge: {
-    fontSize: 7,
-    color: '#FFFFFF',
-    backgroundColor: '#DC2626',
-    padding: 2,
+  competitionBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 2,
     paddingHorizontal: 5,
-    borderRadius: 2,
-    fontWeight: 'bold',
+    borderRadius: 3,
     marginRight: 3,
-    marginBottom: 2,
   },
+  competitionBadgeN3: {
+    backgroundColor: '#1E3A5F',
+  },
+  competitionBadgeU19: {
+    backgroundColor: '#059669',
+  },
+  competitionBadgeU17: {
+    backgroundColor: '#7C3AED',
+  },
+  competitionBadgeR1: {
+    backgroundColor: '#DC2626',
+  },
+  competitionBadgeDefault: {
+    backgroundColor: '#6B7280',
+  },
+  competitionBadgeText: {
+    fontSize: 6,
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+  },
+  competitionLogoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 5,
+  },
+  competitionLogo: {
+    width: 14,
+    height: 14,
+    objectFit: 'contain',
+  },
+  // Badges améliorés style image
+  badgeContainer: { 
+    flexDirection: 'row', 
+    flexWrap: 'wrap', 
+    marginBottom: 5,
+    gap: 3,
+  },
+  // Badge style Gold (Champion, Capitaine)
+  badgeGoldStyle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FCD34D',
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 15,
+  },
+  badgeGoldText: {
+    fontSize: 7,
+    color: '#000000',
+    fontWeight: 'bold',
+    marginLeft: 3,
+  },
+  // Badge style Purple (International)
+  badgePurpleStyle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#7C3AED',
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 15,
+  },
+  badgePurpleText: {
+    fontSize: 7,
+    color: '#7C3AED',
+    fontWeight: 'bold',
+    marginLeft: 3,
+  },
+  // Badge style Orange (Transfert mi-saison)
+  badgeOrangeStyle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#F97316',
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 15,
+  },
+  badgeOrangeText: {
+    fontSize: 7,
+    color: '#F97316',
+    fontWeight: 'bold',
+    marginLeft: 3,
+  },
+  // Badge catégorie
   badgeBlue: {
     fontSize: 7,
     color: '#FFFFFF',
     backgroundColor: '#2563EB',
-    padding: 2,
-    paddingHorizontal: 5,
-    borderRadius: 2,
+    paddingVertical: 3,
+    paddingHorizontal: 6,
+    borderRadius: 3,
     fontWeight: 'bold',
-    marginRight: 3,
-    marginBottom: 2,
   },
   badgeGreen: {
     fontSize: 7,
     color: '#FFFFFF',
     backgroundColor: '#059669',
-    padding: 2,
-    paddingHorizontal: 5,
-    borderRadius: 2,
-    fontWeight: 'bold',
-    marginRight: 3,
-    marginBottom: 2,
-  },
-  badgeGold: {
-    fontSize: 7,
-    color: '#000000',
-    backgroundColor: '#FCD34D',
-    padding: 2,
-    paddingHorizontal: 5,
-    borderRadius: 2,
-    fontWeight: 'bold',
-    marginRight: 3,
-    marginBottom: 2,
-  },
-  badgePurple: {
-    fontSize: 7,
-    color: '#FFFFFF',
-    backgroundColor: '#7C3AED',
-    padding: 2,
-    paddingHorizontal: 5,
-    borderRadius: 2,
-    fontWeight: 'bold',
-    marginRight: 3,
-    marginBottom: 2,
-  },
-  badgeOrange: {
-    fontSize: 7,
-    color: '#FFFFFF',
-    backgroundColor: '#EA580C',
-    padding: 2,
-    paddingHorizontal: 5,
-    borderRadius: 2,
-    fontWeight: 'bold',
-    marginRight: 3,
-    marginBottom: 2,
-  },
-  badgeGray: {
-    fontSize: 7,
-    color: '#FFFFFF',
-    backgroundColor: '#6B7280',
-    padding: 2,
-    paddingHorizontal: 5,
-    borderRadius: 2,
-    fontWeight: 'bold',
-    marginRight: 3,
-    marginBottom: 2,
-  },
-  badgeTeal: {
-    fontSize: 7,
-    color: '#FFFFFF',
-    backgroundColor: '#0D9488',
-    padding: 2,
-    paddingHorizontal: 5,
-    borderRadius: 2,
-    fontWeight: 'bold',
-    marginRight: 3,
-    marginBottom: 2,
-  },
-  // Badges avec icônes
-  badgeWithIcon: {
-    marginRight: 4,
-    marginBottom: 3,
-  },
-  badgeGoldContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FCD34D',
     paddingVertical: 3,
-    paddingHorizontal: 8,
-    borderRadius: 4,
-  },
-  badgePurpleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#8B5CF6',
-    paddingVertical: 3,
-    paddingHorizontal: 8,
-    borderRadius: 4,
-  },
-  badgeGreenContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#059669',
-    paddingVertical: 3,
-    paddingHorizontal: 8,
-    borderRadius: 4,
-  },
-  badgeTextBlack: {
-    fontSize: 8,
+    paddingHorizontal: 6,
+    borderRadius: 3,
     fontWeight: 'bold',
-    color: '#000000',
   },
-  badgeTextWhite: {
-    fontSize: 8,
-    fontWeight: 'bold',
+  badgeDark: {
+    fontSize: 7,
     color: '#FFFFFF',
+    backgroundColor: '#1E3A5F',
+    paddingVertical: 3,
+    paddingHorizontal: 6,
+    borderRadius: 3,
+    fontWeight: 'bold',
   },
-  // Stats section
-  statsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: 6,
-    gap: 4,
-  },
+  careerNotes: { marginTop: 3, marginBottom: 4 },
+  careerNote: { fontSize: 7, color: '#374151', marginBottom: 2, paddingLeft: 6 },
+  statsContainer: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 6, gap: 4 },
   statBox: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#F3F4F6',
     borderRadius: 4,
-    padding: 4,
-    paddingHorizontal: 8,
-    marginRight: 4,
-    marginBottom: 4,
+    paddingVertical: 3,
+    paddingHorizontal: 6,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
   },
-  statValue: {
+  statValue: { fontSize: 9, fontWeight: 'bold', color: '#1E3A5F', marginRight: 3 },
+  statLabel: { fontSize: 7, color: '#6B7280' },
+  // Stat spéciale (Meilleur buteur, etc.)
+  statSpecial: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FEF3C7',
+    borderRadius: 4,
+    paddingVertical: 3,
+    paddingHorizontal: 6,
+    borderWidth: 1,
+    borderColor: '#FCD34D',
+  },
+  statSpecialIcon: { marginRight: 3 },
+  statSpecialText: { fontSize: 7, color: '#92400E', fontWeight: 'bold' },
+  footballFieldContainer: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    width: 105,
+    height: 70,
+  },
+  // Transfermarkt logo style
+  transfermarktContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 4,
+    padding: 6,
+    marginBottom: 8,
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  transfermarktText: {
     fontSize: 10,
     fontWeight: 'bold',
-    color: '#1E3A5F',
-    marginRight: 3,
+    color: '#00A550',
   },
-  statLabel: {
-    fontSize: 8,
-    color: '#6B7280',
+  transfermarktTextRed: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: '#DC2626',
   },
-  // International flag with career
-  internationalFlagSmall: {
+  externalLinkIcon: {
     marginLeft: 4,
-  },
-  // Current season indicator
-  currentSeasonBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  // Loan indicator
-  loanBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 2,
-  },
-  loanIcon: {
-    marginRight: 3,
-  },
-  loanText: {
-    fontSize: 8,
-    color: '#6B7280',
-    fontStyle: 'italic',
   },
 })
 
-// ==================== SVG FLAGS ====================
+// ==================== DRAPEAUX ====================
 
 const FrenchFlag = ({ width = 28, height = 20 }: { width?: number; height?: number }) => (
-  <Svg width={width} height={height} viewBox="0 0 28 20">
-    <Rect x="0" y="0" width="9.33" height="20" fill="#002395" />
-    <Rect x="9.33" y="0" width="9.33" height="20" fill="#FFFFFF" />
-    <Rect x="18.66" y="0" width="9.34" height="20" fill="#ED2939" />
-  </Svg>
-)
-
-const FrenchFlagSmall = () => (
-  <Svg width="14" height="10" viewBox="0 0 28 20">
-    <Rect x="0" y="0" width="9.33" height="20" fill="#002395" />
-    <Rect x="9.33" y="0" width="9.33" height="20" fill="#FFFFFF" />
-    <Rect x="18.66" y="0" width="9.34" height="20" fill="#ED2939" />
+  <Svg width={width} height={height} viewBox="0 0 30 20">
+    <Rect x="0" y="0" width="10" height="20" fill="#002395" />
+    <Rect x="10" y="0" width="10" height="20" fill="#FFFFFF" />
+    <Rect x="20" y="0" width="10" height="20" fill="#ED2939" />
+    <Rect x="0" y="0" width="30" height="20" fill="none" stroke="#CCCCCC" strokeWidth="0.5" />
   </Svg>
 )
 
 const MoroccanFlag = ({ width = 28, height = 20 }: { width?: number; height?: number }) => (
-  <Svg width={width} height={height} viewBox="0 0 28 20">
-    <Rect x="0" y="0" width="28" height="20" fill="#C1272D" />
-    <Path d="M14 5 L15.3 9.5 L20 10 L16.2 13 L17.3 17.5 L14 15 L10.7 17.5 L11.8 13 L8 10 L12.7 9.5 Z" fill="none" stroke="#006233" strokeWidth="1.2" />
+  <Svg width={width} height={height} viewBox="0 0 30 20">
+    <Rect x="0" y="0" width="30" height="20" fill="#C1272D" />
+    <Path d="M15 4 L16.5 9 L22 9 L17.5 12.5 L19 18 L15 14.5 L11 18 L12.5 12.5 L8 9 L13.5 9 Z" fill="none" stroke="#006233" strokeWidth="1.5" />
   </Svg>
 )
 
 const AlgerianFlag = ({ width = 28, height = 20 }: { width?: number; height?: number }) => (
-  <Svg width={width} height={height} viewBox="0 0 28 20">
-    <Rect x="0" y="0" width="14" height="20" fill="#006233" />
-    <Rect x="14" y="0" width="14" height="20" fill="#FFFFFF" />
-    <Circle cx="15" cy="10" r="4" fill="#D21034" />
-    <Path d="M16 7 L17 10 L20 10 L17.5 12 L18.5 15 L16 13 L13.5 15 L14.5 12 L12 10 L15 10 Z" fill="#D21034" />
-  </Svg>
-)
-
-const TunisianFlag = ({ width = 28, height = 20 }: { width?: number; height?: number }) => (
-  <Svg width={width} height={height} viewBox="0 0 28 20">
-    <Rect x="0" y="0" width="28" height="20" fill="#E70013" />
-    <Circle cx="14" cy="10" r="5" fill="#FFFFFF" />
-    <Circle cx="15" cy="10" r="4" fill="#E70013" />
-    <Path d="M13 7 L14 10 L17 10 L14.5 12 L15.5 14 L13 12 L10.5 14 L11.5 12 L9 10 L12 10 Z" fill="#E70013" />
-  </Svg>
-)
-
-const SenegaleseFlag = ({ width = 28, height = 20 }: { width?: number; height?: number }) => (
-  <Svg width={width} height={height} viewBox="0 0 28 20">
-    <Rect x="0" y="0" width="9.33" height="20" fill="#00853F" />
-    <Rect x="9.33" y="0" width="9.33" height="20" fill="#FDEF42" />
-    <Rect x="18.66" y="0" width="9.34" height="20" fill="#E31B23" />
-    <Path d="M14 7 L14.8 9.5 L17.5 9.5 L15.3 11 L16.1 13.5 L14 12 L11.9 13.5 L12.7 11 L10.5 9.5 L13.2 9.5 Z" fill="#00853F" />
-  </Svg>
-)
-
-const IvorianFlag = ({ width = 28, height = 20 }: { width?: number; height?: number }) => (
-  <Svg width={width} height={height} viewBox="0 0 28 20">
-    <Rect x="0" y="0" width="9.33" height="20" fill="#F77F00" />
-    <Rect x="9.33" y="0" width="9.33" height="20" fill="#FFFFFF" />
-    <Rect x="18.66" y="0" width="9.34" height="20" fill="#009E60" />
-  </Svg>
-)
-
-const CameroonianFlag = ({ width = 28, height = 20 }: { width?: number; height?: number }) => (
-  <Svg width={width} height={height} viewBox="0 0 28 20">
-    <Rect x="0" y="0" width="9.33" height="20" fill="#007A5E" />
-    <Rect x="9.33" y="0" width="9.33" height="20" fill="#CE1126" />
-    <Rect x="18.66" y="0" width="9.34" height="20" fill="#FCD116" />
-    <Path d="M14 7 L14.8 9.5 L17.5 9.5 L15.3 11 L16.1 13.5 L14 12 L11.9 13.5 L12.7 11 L10.5 9.5 L13.2 9.5 Z" fill="#FCD116" />
-  </Svg>
-)
-
-const BelgianFlag = ({ width = 28, height = 20 }: { width?: number; height?: number }) => (
-  <Svg width={width} height={height} viewBox="0 0 28 20">
-    <Rect x="0" y="0" width="9.33" height="20" fill="#000000" />
-    <Rect x="9.33" y="0" width="9.33" height="20" fill="#FAE042" />
-    <Rect x="18.66" y="0" width="9.34" height="20" fill="#ED2939" />
-  </Svg>
-)
-
-const SpanishFlag = ({ width = 28, height = 20 }: { width?: number; height?: number }) => (
-  <Svg width={width} height={height} viewBox="0 0 28 20">
-    <Rect x="0" y="0" width="28" height="5" fill="#AA151B" />
-    <Rect x="0" y="5" width="28" height="10" fill="#F1BF00" />
-    <Rect x="0" y="15" width="28" height="5" fill="#AA151B" />
-  </Svg>
-)
-
-const PortugueseFlag = ({ width = 28, height = 20 }: { width?: number; height?: number }) => (
-  <Svg width={width} height={height} viewBox="0 0 28 20">
-    <Rect x="0" y="0" width="11" height="20" fill="#006600" />
-    <Rect x="11" y="0" width="17" height="20" fill="#FF0000" />
-    <Circle cx="11" cy="10" r="4" fill="#FFCC00" />
+  <Svg width={width} height={height} viewBox="0 0 30 20">
+    <Rect x="0" y="0" width="15" height="20" fill="#006233" />
+    <Rect x="15" y="0" width="15" height="20" fill="#FFFFFF" />
+    <Circle cx="16" cy="10" r="5" fill="#D21034" />
+    <Circle cx="18" cy="10" r="4" fill="#FFFFFF" />
   </Svg>
 )
 
 const ItalianFlag = ({ width = 28, height = 20 }: { width?: number; height?: number }) => (
-  <Svg width={width} height={height} viewBox="0 0 28 20">
-    <Rect x="0" y="0" width="9.33" height="20" fill="#009246" />
-    <Rect x="9.33" y="0" width="9.33" height="20" fill="#FFFFFF" />
-    <Rect x="18.66" y="0" width="9.34" height="20" fill="#CE2B37" />
+  <Svg width={width} height={height} viewBox="0 0 30 20">
+    <Rect x="0" y="0" width="10" height="20" fill="#009246" />
+    <Rect x="10" y="0" width="10" height="20" fill="#FFFFFF" />
+    <Rect x="20" y="0" width="10" height="20" fill="#CE2B37" />
+  </Svg>
+)
+
+const SpanishFlag = ({ width = 28, height = 20 }: { width?: number; height?: number }) => (
+  <Svg width={width} height={height} viewBox="0 0 30 20">
+    <Rect x="0" y="0" width="30" height="5" fill="#AA151B" />
+    <Rect x="0" y="5" width="30" height="10" fill="#F1BF00" />
+    <Rect x="0" y="15" width="30" height="5" fill="#AA151B" />
   </Svg>
 )
 
 const GermanFlag = ({ width = 28, height = 20 }: { width?: number; height?: number }) => (
-  <Svg width={width} height={height} viewBox="0 0 28 20">
-    <Rect x="0" y="0" width="28" height="6.67" fill="#000000" />
-    <Rect x="0" y="6.67" width="28" height="6.67" fill="#DD0000" />
-    <Rect x="0" y="13.34" width="28" height="6.66" fill="#FFCC00" />
+  <Svg width={width} height={height} viewBox="0 0 30 20">
+    <Rect x="0" y="0" width="30" height="6.67" fill="#000000" />
+    <Rect x="0" y="6.67" width="30" height="6.67" fill="#DD0000" />
+    <Rect x="0" y="13.33" width="30" height="6.67" fill="#FFCC00" />
   </Svg>
 )
 
-const DefaultFlag = () => (
-  <Svg width="28" height="20" viewBox="0 0 28 20">
-    <Rect x="0" y="0" width="28" height="20" fill="#CCCCCC" stroke="#999999" strokeWidth="1" />
+const PortugueseFlag = ({ width = 28, height = 20 }: { width?: number; height?: number }) => (
+  <Svg width={width} height={height} viewBox="0 0 30 20">
+    <Rect x="0" y="0" width="12" height="20" fill="#006600" />
+    <Rect x="12" y="0" width="18" height="20" fill="#FF0000" />
+    <Circle cx="12" cy="10" r="5" fill="#FFCC00" />
   </Svg>
 )
 
-// ==================== SVG ICONS ====================
+const BelgianFlag = ({ width = 28, height = 20 }: { width?: number; height?: number }) => (
+  <Svg width={width} height={height} viewBox="0 0 30 20">
+    <Rect x="0" y="0" width="10" height="20" fill="#000000" />
+    <Rect x="10" y="0" width="10" height="20" fill="#FAE042" />
+    <Rect x="20" y="0" width="10" height="20" fill="#ED2939" />
+  </Svg>
+)
+
+const SenegaleseFlag = ({ width = 28, height = 20 }: { width?: number; height?: number }) => (
+  <Svg width={width} height={height} viewBox="0 0 30 20">
+    <Rect x="0" y="0" width="10" height="20" fill="#00853F" />
+    <Rect x="10" y="0" width="10" height="20" fill="#FDEF42" />
+    <Rect x="20" y="0" width="10" height="20" fill="#E31B23" />
+  </Svg>
+)
+
+const IvorianFlag = ({ width = 28, height = 20 }: { width?: number; height?: number }) => (
+  <Svg width={width} height={height} viewBox="0 0 30 20">
+    <Rect x="0" y="0" width="10" height="20" fill="#F77F00" />
+    <Rect x="10" y="0" width="10" height="20" fill="#FFFFFF" />
+    <Rect x="20" y="0" width="10" height="20" fill="#009E60" />
+  </Svg>
+)
+
+const CameroonianFlag = ({ width = 28, height = 20 }: { width?: number; height?: number }) => (
+  <Svg width={width} height={height} viewBox="0 0 30 20">
+    <Rect x="0" y="0" width="10" height="20" fill="#007A5E" />
+    <Rect x="10" y="0" width="10" height="20" fill="#CE1126" />
+    <Rect x="20" y="0" width="10" height="20" fill="#FCD116" />
+  </Svg>
+)
+
+const TunisianFlag = ({ width = 28, height = 20 }: { width?: number; height?: number }) => (
+  <Svg width={width} height={height} viewBox="0 0 30 20">
+    <Rect x="0" y="0" width="30" height="20" fill="#E70013" />
+    <Circle cx="15" cy="10" r="6" fill="#FFFFFF" />
+    <Circle cx="16" cy="10" r="5" fill="#E70013" />
+  </Svg>
+)
+
+const GenericFlag = ({ width = 28, height = 20 }: { width?: number; height?: number }) => (
+  <Svg width={width} height={height} viewBox="0 0 30 20">
+    <Rect x="0" y="0" width="30" height="20" fill="#E5E7EB" stroke="#9CA3AF" strokeWidth="1" />
+  </Svg>
+)
+
+// ==================== ICÔNES ====================
+
+const UserIcon = () => (
+  <Svg width="12" height="12" viewBox="0 0 24 24">
+    <Circle cx="12" cy="8" r="4" fill="#FFFFFF" />
+    <Path d="M12 14c-4 0-8 2-8 4v2h16v-2c0-2-4-4-8-4z" fill="#FFFFFF" />
+  </Svg>
+)
 
 const CalendarIcon = () => (
   <Svg width="10" height="10" viewBox="0 0 24 24">
-    <Path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z" fill="#FFFFFF" />
+    <Rect x="3" y="4" width="18" height="18" rx="2" fill="none" stroke="#FFFFFF" strokeWidth="2" />
+    <Line x1="3" y1="10" x2="21" y2="10" stroke="#FFFFFF" strokeWidth="2" />
+    <Line x1="8" y1="2" x2="8" y2="6" stroke="#FFFFFF" strokeWidth="2" />
+    <Line x1="16" y1="2" x2="16" y2="6" stroke="#FFFFFF" strokeWidth="2" />
   </Svg>
 )
 
 const FootIcon = () => (
   <Svg width="10" height="10" viewBox="0 0 24 24">
-    <Path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" fill="#FFFFFF" />
+    <Ellipse cx="10" cy="14" rx="6" ry="8" fill="#FFFFFF" />
+    <Circle cx="16" cy="8" r="3" fill="#FFFFFF" />
   </Svg>
 )
 
-const HeightIcon = () => (
+const RulerIcon = () => (
   <Svg width="10" height="10" viewBox="0 0 24 24">
-    <Path d="M13 7h-2v2h2V7zm0 4h-2v6h2v-6zm4-9.99L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z" fill="#FFFFFF" />
+    <Rect x="4" y="2" width="6" height="20" fill="none" stroke="#FFFFFF" strokeWidth="2" />
+    <Line x1="4" y1="6" x2="7" y2="6" stroke="#FFFFFF" strokeWidth="1" />
+    <Line x1="4" y1="10" x2="7" y2="10" stroke="#FFFFFF" strokeWidth="1" />
+    <Line x1="4" y1="14" x2="7" y2="14" stroke="#FFFFFF" strokeWidth="1" />
+    <Line x1="4" y1="18" x2="7" y2="18" stroke="#FFFFFF" strokeWidth="1" />
   </Svg>
 )
 
 const WeightIcon = () => (
   <Svg width="10" height="10" viewBox="0 0 24 24">
-    <Path d="M12 3c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-3 7v10h2v-5h2v5h2V10c0-1.1-.9-2-2-2h-2c-1.1 0-2 .9-2 2z" fill="#FFFFFF" />
+    <Circle cx="12" cy="6" r="3" fill="#FFFFFF" />
+    <Path d="M8 22 L10 10 L14 10 L16 22 Z" fill="#FFFFFF" />
   </Svg>
 )
 
 const SpeedIcon = () => (
   <Svg width="10" height="10" viewBox="0 0 24 24">
-    <Path d="M20.38 8.57l-1.23 1.85a8 8 0 0 1-.22 7.58H5.07A8 8 0 0 1 15.58 6.85l1.85-1.23A10 10 0 0 0 3.35 19a2 2 0 0 0 1.72 1h13.85a2 2 0 0 0 1.74-1 10 10 0 0 0-.27-10.44zm-9.79 6.84a2 2 0 0 0 2.83 0l5.66-8.49-8.49 5.66a2 2 0 0 0 0 2.83z" fill="#FFFFFF" />
+    <Path d="M12 2 A10 10 0 0 1 22 12" fill="none" stroke="#FFFFFF" strokeWidth="2" />
+    <Path d="M12 2 A10 10 0 0 0 2 12" fill="none" stroke="#FFFFFF" strokeWidth="2" />
+    <Line x1="12" y1="12" x2="18" y2="6" stroke="#FFFFFF" strokeWidth="2" />
+    <Circle cx="12" cy="12" r="2" fill="#FFFFFF" />
+  </Svg>
+)
+
+const CheckIcon = () => (
+  <Svg width="12" height="12" viewBox="0 0 24 24">
+    <Path d="M5 12 L10 17 L20 7" fill="none" stroke="#FFFFFF" strokeWidth="3" />
   </Svg>
 )
 
 const EmailIcon = () => (
   <Svg width="10" height="10" viewBox="0 0 24 24">
-    <Path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="#FFFFFF" />
+    <Rect x="2" y="4" width="20" height="16" rx="2" fill="none" stroke="#FFFFFF" strokeWidth="2" />
+    <Path d="M2 6 L12 13 L22 6" fill="none" stroke="#FFFFFF" strokeWidth="2" />
   </Svg>
 )
 
 const PhoneIcon = () => (
   <Svg width="10" height="10" viewBox="0 0 24 24">
-    <Path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" fill="#FFFFFF" />
+    <Path d="M5 4h4l2 5-2.5 1.5c1 2 2.5 3.5 4.5 4.5L15 13l5 2v4c0 1-1 2-2 2C9 21 3 15 3 6c0-1 1-2 2-2" fill="#FFFFFF" />
   </Svg>
 )
 
 const LinkIcon = () => (
   <Svg width="10" height="10" viewBox="0 0 24 24">
-    <Path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z" fill="#FFFFFF" />
+    <Path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke="#FFFFFF" strokeWidth="2" />
+    <Path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke="#FFFFFF" strokeWidth="2" />
   </Svg>
 )
 
 const VideoIcon = () => (
+  <Svg width="10" height="10" viewBox="0 0 24 24">
+    <Rect x="2" y="4" width="15" height="16" rx="2" fill="none" stroke="#FFFFFF" strokeWidth="2" />
+    <Path d="M17 8l5-3v14l-5-3V8z" fill="#FFFFFF" />
+  </Svg>
+)
+
+// Icône lien externe
+const ExternalLinkIcon = ({ color = "#1E3A5F" }: { color?: string }) => (
+  <Svg width="8" height="8" viewBox="0 0 24 24">
+    <Path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" fill="none" stroke={color} strokeWidth="2" />
+    <Path d="M15 3h6v6" fill="none" stroke={color} strokeWidth="2" />
+    <Line x1="10" y1="14" x2="21" y2="3" stroke={color} strokeWidth="2" />
+  </Svg>
+)
+
+// Icône Formation/Graduation
+const GraduationIcon = () => (
   <Svg width="12" height="12" viewBox="0 0 24 24">
-    <Path d="M10 16.5l6-4.5-6-4.5v9zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" fill="#FF0000" />
+    <Path d="M12 3L1 9l11 6l9-4.91V17h2V9L12 3z" fill="#FFFFFF" />
+    <Path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z" fill="#FFFFFF" />
   </Svg>
 )
 
-const TrophyIcon = () => (
+// Icône Stats
+const ChartIcon = ({ color = "#FFFFFF" }: { color?: string }) => (
   <Svg width="10" height="10" viewBox="0 0 24 24">
-    <Path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.63 1.5 1.98 2.63 3.61 2.96V19H7v2h10v-2h-4v-3.1c1.63-.33 2.98-1.46 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z" fill="#FFD700" />
+    <Rect x="3" y="12" width="4" height="9" fill={color} />
+    <Rect x="10" y="6" width="4" height="15" fill={color} />
+    <Rect x="17" y="2" width="4" height="19" fill={color} />
   </Svg>
 )
 
-const StarIcon = () => (
-  <Svg width="10" height="10" viewBox="0 0 24 24">
-    <Path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="#FFD700" />
+// Icône Meilleur buteur (trophée doré)
+const TopScorerIcon = ({ size = 10 }: { size?: number }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24">
+    <Circle cx="12" cy="8" r="6" fill="#FCD34D" />
+    <Path d="M8 14h8l-1 6H9l-1-6z" fill="#FCD34D" />
+    <Circle cx="12" cy="8" r="3" fill="#F59E0B" />
   </Svg>
 )
 
-const CheckIcon = () => (
-  <Svg width="10" height="10" viewBox="0 0 24 24">
-    <Path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="#FFFFFF" />
+// Icônes pour badges
+const TrophyIcon = ({ size = 10, color = "#000000" }: { size?: number; color?: string }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24">
+    <Path d="M5 4v4c0 3 3 5 7 5s7-2 7-5V4H5z" fill={color} />
+    <Path d="M3 4v4c0 1 1 2 2 2V8V4H3z" fill={color} />
+    <Path d="M21 4v4c0 1-1 2-2 2V8V4h2z" fill={color} />
+    <Rect x="10" y="13" width="4" height="4" fill={color} />
+    <Rect x="8" y="17" width="8" height="3" fill={color} />
   </Svg>
 )
 
-const GlobeIcon = () => (
-  <Svg width="10" height="10" viewBox="0 0 24 24">
-    <Path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" fill="#FFFFFF" />
+const CrownIcon = ({ size = 10, color = "#000000" }: { size?: number; color?: string }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24">
+    <Path d="M2 18L4 8l4 4 4-8 4 8 4-4 2 10H2z" fill={color} />
   </Svg>
 )
 
-// Icônes pour les badges (petite taille)
-const TrophyIconSmall = () => (
-  <Svg width="12" height="12" viewBox="0 0 24 24" style={{ marginRight: 3 }}>
-    <Path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.63 1.5 1.98 2.63 3.61 2.96V19H7v2h10v-2h-4v-3.1c1.63-.33 2.98-1.46 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z" fill="#000000" />
+const ArrowUpIcon = ({ size = 10 }: { size?: number }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24">
+    <Path d="M12 4L5 12h4v8h6v-8h4L12 4z" fill="#3B82F6" />
   </Svg>
 )
 
-const CrownIconSmall = () => (
-  <Svg width="12" height="12" viewBox="0 0 24 24" style={{ marginRight: 3 }}>
-    <Path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .55-.45 1-1 1H6c-.55 0-1-.45-1-1v-1h14v1z" fill="#000000" />
+const GlobeIcon = ({ size = 10, color = "#7C3AED" }: { size?: number; color?: string }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24">
+    <Circle cx="12" cy="12" r="10" fill="none" stroke={color} strokeWidth="2" />
+    <Ellipse cx="12" cy="12" rx="4" ry="10" fill="none" stroke={color} strokeWidth="1" />
+    <Line x1="2" y1="12" x2="22" y2="12" stroke={color} strokeWidth="1" />
   </Svg>
 )
 
-const StarIconSmall = () => (
-  <Svg width="12" height="12" viewBox="0 0 24 24" style={{ marginRight: 3 }}>
-    <Path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="#000000" />
+// Icône Transfert (flèches qui tournent)
+const TransferIcon = ({ size = 10, color = "#F97316" }: { size?: number; color?: string }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24">
+    <Path d="M7 16V4M7 4L3 8M7 4L11 8" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <Path d="M17 8V20M17 20L21 16M17 20L13 16" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
   </Svg>
 )
 
-const GlobeIconSmall = () => (
-  <Svg width="12" height="12" viewBox="0 0 24 24" style={{ marginRight: 3 }}>
-    <Path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" fill="#FFFFFF" />
-  </Svg>
-)
+// ==================== TERRAIN DE FOOTBALL ====================
 
-const UserIcon = () => (
-  <Svg width="12" height="12" viewBox="0 0 24 24">
-    <Path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="#FFFFFF" />
-  </Svg>
-)
-
-// ==================== FOOTBALL FIELD ====================
-
-// Positions sur le terrain (coordonnées x, y pour chaque poste)
-const getPositionCoordinates = (poste: string): { x: number; y: number } => {
-  const positions: Record<string, { x: number; y: number }> = {
-    // Gardien
-    'GB': { x: 10, y: 32.5 },
-    
-    // Défenseurs
-    'DG': { x: 22, y: 52 },
-    'DC': { x: 22, y: 32.5 },
-    'DD': { x: 22, y: 13 },
-    
-    // Milieux défensifs
-    'MDC': { x: 38, y: 32.5 },
-    
-    // Milieux
-    'MC': { x: 45, y: 32.5 },
-    'MG': { x: 45, y: 52 },
-    'MD': { x: 45, y: 13 },
-    
-    // Milieu offensif
-    'MOC': { x: 55, y: 32.5 },
-    
-    // Ailiers
-    'AG': { x: 65, y: 52 },
-    'AD': { x: 65, y: 13 },
-    
-    // Attaquants
-    'BU': { x: 75, y: 32.5 },
-    'ATT': { x: 75, y: 32.5 },
-    
-    // Pistons (pour 3-5-2)
-    'Piston G': { x: 38, y: 55 },
-    'Piston D': { x: 38, y: 10 },
-  }
-  
-  return positions[poste] || { x: 45, y: 32.5 }
+interface PositionCoord {
+  x: number
+  y: number
 }
 
-const FootballField = ({ primaryPost, secondaryPost }: { primaryPost?: string; secondaryPost?: string }) => {
-  const primaryPos = getPositionCoordinates(primaryPost || 'MC')
-  const secondaryPos = secondaryPost ? getPositionCoordinates(secondaryPost) : null
-  
+const getFormationPositions = (formation: string): Record<string, PositionCoord> => {
+  const base = { GB: { x: 8, y: 50 } }
+
+  if (formation?.includes('4') && (formation?.includes('3') || formation?.includes('4'))) {
+    return {
+      ...base,
+      DG: { x: 25, y: 85 },
+      DC: { x: 25, y: 60 },
+      DC2: { x: 25, y: 40 },
+      DD: { x: 25, y: 15 },
+      MDC: { x: 45, y: 50 },
+      MC: { x: 50, y: 35 },
+      MC2: { x: 50, y: 65 },
+      MG: { x: 50, y: 85 },
+      MD: { x: 50, y: 15 },
+      MOC: { x: 65, y: 50 },
+      AG: { x: 75, y: 85 },
+      BU: { x: 85, y: 50 },
+      AD: { x: 75, y: 15 },
+      ATT: { x: 85, y: 50 },
+    }
+  } else if (formation?.includes('3') || formation?.includes('5')) {
+    return {
+      ...base,
+      DC: { x: 22, y: 50 },
+      DC_G: { x: 22, y: 70 },
+      DC_D: { x: 22, y: 30 },
+      DG: { x: 38, y: 90 },
+      DD: { x: 38, y: 10 },
+      'Piston G': { x: 40, y: 90 },
+      'Piston D': { x: 40, y: 10 },
+      MDC: { x: 45, y: 50 },
+      MC: { x: 55, y: 35 },
+      MC2: { x: 55, y: 65 },
+      MOC: { x: 65, y: 50 },
+      BU: { x: 82, y: 35 },
+      BU2: { x: 82, y: 65 },
+      ATT: { x: 82, y: 50 },
+      AG: { x: 70, y: 85 },
+      AD: { x: 70, y: 15 },
+    }
+  }
+
+  return {
+    ...base,
+    DG: { x: 25, y: 85 },
+    DC: { x: 25, y: 60 },
+    DC2: { x: 25, y: 40 },
+    DD: { x: 25, y: 15 },
+    MG: { x: 50, y: 85 },
+    MC: { x: 50, y: 35 },
+    MC2: { x: 50, y: 65 },
+    MD: { x: 50, y: 15 },
+    MDC: { x: 42, y: 50 },
+    MOC: { x: 60, y: 50 },
+    BU: { x: 80, y: 35 },
+    BU2: { x: 80, y: 65 },
+    ATT: { x: 80, y: 50 },
+    AG: { x: 70, y: 85 },
+    AD: { x: 70, y: 15 },
+  }
+}
+
+const FootballField = ({
+  primaryPost,
+  secondaryPost,
+  formation = '4-3-3',
+}: {
+  primaryPost?: string
+  secondaryPost?: string
+  formation?: string
+}) => {
+  const positions = getFormationPositions(formation)
+
   return (
-    <Svg width="90" height="65" viewBox="0 0 90 65">
-      {/* Background */}
-      <Rect x="0" y="0" width="90" height="65" fill="#22C55E" rx="3" />
-      {/* Field border */}
-      <Rect x="3" y="3" width="84" height="59" fill="none" stroke="#FFFFFF" strokeWidth="1.5" />
-      {/* Center line */}
-      <Line x1="45" y1="3" x2="45" y2="62" stroke="#FFFFFF" strokeWidth="1" />
-      {/* Center circle */}
-      <Circle cx="45" cy="32.5" r="8" fill="none" stroke="#FFFFFF" strokeWidth="1" />
-      {/* Center dot */}
-      <Circle cx="45" cy="32.5" r="1.5" fill="#FFFFFF" />
-      {/* Left penalty area */}
-      <Rect x="3" y="18" width="12" height="29" fill="none" stroke="#FFFFFF" strokeWidth="1" />
-      {/* Left goal area */}
-      <Rect x="3" y="25" width="5" height="15" fill="none" stroke="#FFFFFF" strokeWidth="1" />
-      {/* Right penalty area */}
-      <Rect x="75" y="18" width="12" height="29" fill="none" stroke="#FFFFFF" strokeWidth="1" />
-      {/* Right goal area */}
-      <Rect x="82" y="25" width="5" height="15" fill="none" stroke="#FFFFFF" strokeWidth="1" />
-      
-      {/* Secondary position marker (if exists) - slightly transparent */}
-      {secondaryPos && (
-        <Circle 
-          cx={secondaryPos.x} 
-          cy={secondaryPos.y} 
-          r="4" 
-          fill="#DC2626" 
-          stroke="#FFFFFF" 
-          strokeWidth="1" 
-          opacity="0.7"
-        />
-      )}
-      
-      {/* Primary position marker */}
-      <Circle 
-        cx={primaryPos.x} 
-        cy={primaryPos.y} 
-        r="4" 
-        fill="#1E3A5F" 
-        stroke="#FFFFFF" 
-        strokeWidth="1.5" 
-      />
+    <Svg width="105" height="70" viewBox="0 0 110 75">
+      <Rect x="0" y="0" width="110" height="75" fill="#22C55E" rx="5" />
+      <Rect x="4" y="4" width="102" height="67" fill="none" stroke="#FFFFFF" strokeWidth="1.5" />
+      <Line x1="55" y1="4" x2="55" y2="71" stroke="#FFFFFF" strokeWidth="1" />
+      <Circle cx="55" cy="37.5" r="10" fill="none" stroke="#FFFFFF" strokeWidth="1" />
+      <Circle cx="55" cy="37.5" r="2" fill="#FFFFFF" />
+      <Rect x="4" y="20" width="15" height="35" fill="none" stroke="#FFFFFF" strokeWidth="1" />
+      <Rect x="4" y="28" width="6" height="19" fill="none" stroke="#FFFFFF" strokeWidth="1" />
+      <Rect x="91" y="20" width="15" height="35" fill="none" stroke="#FFFFFF" strokeWidth="1" />
+      <Rect x="100" y="28" width="6" height="19" fill="none" stroke="#FFFFFF" strokeWidth="1" />
+
+      {Object.entries(positions).map(([poste, coord]) => {
+        const isPrimary = primaryPost && poste.toUpperCase() === primaryPost.toUpperCase()
+        const isSecondary = secondaryPost && poste.toUpperCase() === secondaryPost.toUpperCase()
+        const px = (coord.x / 100) * 110
+        const py = (coord.y / 100) * 75
+
+        if (isPrimary) {
+          return (
+            <G key={poste}>
+              <Circle cx={px} cy={py} r="6" fill="#1E3A5F" />
+              <Circle cx={px} cy={py} r="6" fill="none" stroke="#FFFFFF" strokeWidth="2" />
+            </G>
+          )
+        } else if (isSecondary) {
+          return (
+            <G key={poste}>
+              <Circle cx={px} cy={py} r="5" fill="#DC2626" />
+              <Circle cx={px} cy={py} r="5" fill="none" stroke="#FFFFFF" strokeWidth="1.5" />
+            </G>
+          )
+        } else {
+          return <Circle key={poste} cx={px} cy={py} r="3" fill="#FFFFFF" opacity="0.7" />
+        }
+      })}
     </Svg>
   )
 }
 
-// ==================== COMPONENT ====================
+// ==================== HELPER FUNCTIONS ====================
+
+// Fonction pour obtenir le style du badge de compétition
+const getCompetitionBadgeStyle = (competition: string) => {
+  const lower = competition?.toLowerCase() || ''
+  if (lower.includes('n3') || lower.includes('national 3')) return styles.competitionBadgeN3
+  if (lower.includes('u19') || lower.includes('u-19')) return styles.competitionBadgeU19
+  if (lower.includes('u17') || lower.includes('u-17')) return styles.competitionBadgeU17
+  if (lower.includes('u16') || lower.includes('u-16')) return styles.competitionBadgeU17
+  if (lower.includes('u15') || lower.includes('u-15')) return styles.competitionBadgeU17
+  if (lower.includes('r1') || lower.includes('regional 1') || lower.includes('régional 1')) return styles.competitionBadgeR1
+  if (lower.includes('r2') || lower.includes('regional 2')) return styles.competitionBadgeR1
+  return styles.competitionBadgeDefault
+}
+
+// Fonction pour extraire les badges de compétition d'une chaîne
+const extractCompetitionBadges = (competition: string): string[] => {
+  const badges: string[] = []
+  const lower = competition?.toLowerCase() || ''
+  
+  // Extraire N3, N2, N1, etc.
+  const nationalMatch = lower.match(/n[1-3]/g)
+  if (nationalMatch) badges.push(...nationalMatch.map(m => m.toUpperCase()))
+  
+  // Extraire U19, U17, U16, U15
+  const ageMatch = lower.match(/u\d{2}/gi)
+  if (ageMatch) badges.push(...ageMatch.map(m => m.toUpperCase()))
+  
+  // Extraire R1, R2
+  const regionalMatch = lower.match(/r[1-3]/gi)
+  if (regionalMatch) badges.push(...regionalMatch.map(m => m.toUpperCase()))
+  
+  return [...new Set(badges)] // Retirer les doublons
+}
+
+// ==================== COMPOSANT PRINCIPAL ====================
+
+interface Formation {
+  year: string
+  title: string
+  institution?: string
+  diploma?: string
+}
 
 interface CVPDFTemplateProps {
   player: any
   careers: any[]
   qualities: any[]
+  formations?: Formation[]
 }
 
-export const CVPDFTemplate: React.FC<CVPDFTemplateProps> = ({ player, careers, qualities }) => {
+const getNationalityFlag = (nationality: string, width = 32, height = 22) => {
+  const lower = nationality?.toLowerCase() || ''
+  if (lower.includes('france') || lower.includes('francais') || lower.includes('française')) return <FrenchFlag width={width} height={height} />
+  if (lower.includes('maroc') || lower.includes('marocain')) return <MoroccanFlag width={width} height={height} />
+  if (lower.includes('algerie') || lower.includes('algerien') || lower.includes('algérie') || lower.includes('algerienne')) return <AlgerianFlag width={width} height={height} />
+  if (lower.includes('italie') || lower.includes('italien')) return <ItalianFlag width={width} height={height} />
+  if (lower.includes('espagne') || lower.includes('espagnol')) return <SpanishFlag width={width} height={height} />
+  if (lower.includes('allemagne') || lower.includes('allemand')) return <GermanFlag width={width} height={height} />
+  if (lower.includes('portugal') || lower.includes('portugais')) return <PortugueseFlag width={width} height={height} />
+  if (lower.includes('belgique') || lower.includes('belge')) return <BelgianFlag width={width} height={height} />
+  if (lower.includes('senegal') || lower.includes('sénégal') || lower.includes('senegalais')) return <SenegaleseFlag width={width} height={height} />
+  if (lower.includes('cote') || lower.includes('ivoire') || lower.includes('ivoirien')) return <IvorianFlag width={width} height={height} />
+  if (lower.includes('cameroun') || lower.includes('camerounais')) return <CameroonianFlag width={width} height={height} />
+  if (lower.includes('tunisie') || lower.includes('tunisien')) return <TunisianFlag width={width} height={height} />
+  return <GenericFlag width={width} height={height} />
+}
+
+export const CVPDFTemplate: React.FC<CVPDFTemplateProps> = ({ player, careers, qualities, formations }) => {
   const formatDate = (dateString: string) => {
     if (!dateString) return ''
     const date = new Date(dateString)
@@ -814,36 +847,21 @@ export const CVPDFTemplate: React.FC<CVPDFTemplateProps> = ({ player, careers, q
     })
   }
 
-  const getNationalityFlag = (nationality: string, width = 28, height = 20) => {
-    const lower = nationality?.toLowerCase() || ''
-    if (lower.includes('france') || lower.includes('francais') || lower.includes('french') || lower.includes('française')) return <FrenchFlag width={width} height={height} />
-    if (lower.includes('maroc') || lower.includes('morocc') || lower.includes('marocain')) return <MoroccanFlag width={width} height={height} />
-    if (lower.includes('algerie') || lower.includes('algeria') || lower.includes('algerien')) return <AlgerianFlag width={width} height={height} />
-    if (lower.includes('tunisie') || lower.includes('tunisia') || lower.includes('tunisien')) return <TunisianFlag width={width} height={height} />
-    if (lower.includes('senegal')) return <SenegaleseFlag width={width} height={height} />
-    if (lower.includes('ivoire') || lower.includes('ivory') || lower.includes('ivoirien')) return <IvorianFlag width={width} height={height} />
-    if (lower.includes('cameroun') || lower.includes('cameroon')) return <CameroonianFlag width={width} height={height} />
-    if (lower.includes('belgique') || lower.includes('belgium') || lower.includes('belge')) return <BelgianFlag width={width} height={height} />
-    if (lower.includes('espagne') || lower.includes('spain') || lower.includes('espagnol')) return <SpanishFlag width={width} height={height} />
-    if (lower.includes('portugal') || lower.includes('portugais')) return <PortugueseFlag width={width} height={height} />
-    if (lower.includes('italie') || lower.includes('italy') || lower.includes('italien')) return <ItalianFlag width={width} height={height} />
-    if (lower.includes('allemagne') || lower.includes('germany') || lower.includes('allemand')) return <GermanFlag width={width} height={height} />
-    return <FrenchFlag width={width} height={height} />
-  }
-
   const getPosteLabel = (poste: string) => {
     const posteLabels: Record<string, string> = {
-      'GB': 'GARDIEN',
-      'DG': 'DÉFENSEUR GAUCHE',
-      'DC': 'DÉFENSEUR CENTRAL',
-      'DD': 'DÉFENSEUR DROIT',
-      'MDC': 'MILIEU DÉFENSIF',
-      'MC': 'MILIEU CENTRAL',
-      'MOC': 'MILIEU OFFENSIF',
-      'AG': 'AILIER GAUCHE',
-      'AD': 'AILIER DROIT',
-      'BU': 'BUTEUR',
-      'ATT': 'ATTAQUANT',
+      GB: 'GARDIEN',
+      DG: 'DEFENSEUR GAUCHE',
+      DC: 'DEFENSEUR CENTRAL',
+      DD: 'DEFENSEUR DROIT',
+      MDC: 'MILIEU DEFENSIF',
+      MC: 'MILIEU CENTRAL',
+      MOC: 'MILIEU OFFENSIF',
+      MG: 'MILIEU GAUCHE',
+      MD: 'MILIEU DROIT',
+      AG: 'AILIER GAUCHE',
+      AD: 'AILIER DROIT',
+      BU: 'BUTEUR',
+      ATT: 'ATTAQUANT',
       'Piston G': 'PISTON GAUCHE',
       'Piston D': 'PISTON DROIT',
     }
@@ -851,17 +869,6 @@ export const CVPDFTemplate: React.FC<CVPDFTemplateProps> = ({ player, careers, q
   }
 
   const formatCareerYears = (career: any) => {
-    if (career.periode) {
-      let period = career.periode
-      period = period.replace(/[^\d\s-]/g, ' - ')
-      period = period.replace(/\s*-\s*/g, ' - ')
-      const years = period.match(/\d{4}/g)
-      if (years && years.length >= 2) {
-        return { start: years[0], end: years[1] }
-      }
-      return { start: period, end: '' }
-    }
-    
     if (career.season) {
       const years = career.season.match(/\d{4}/g)
       if (years && years.length >= 2) {
@@ -869,403 +876,484 @@ export const CVPDFTemplate: React.FC<CVPDFTemplateProps> = ({ player, careers, q
       }
       return { start: career.season, end: '' }
     }
-    
     if (!career.startDate) return { start: '', end: '' }
     const start = new Date(career.startDate).getFullYear()
-    const end = career.endDate ? new Date(career.endDate).getFullYear() : 'présent'
+    const end = career.endDate ? new Date(career.endDate).getFullYear() : 'present'
     return { start: start.toString(), end: end.toString() }
   }
 
-  const groupQualitiesByCategory = () => {
-    const grouped: Record<string, any[]> = {}
-    if (!qualities) return grouped
-    
-    qualities.forEach((q: any) => {
-      const category = q.category || 'Autres'
-      if (!grouped[category]) grouped[category] = []
-      grouped[category].push(q)
-    })
-    return grouped
-  }
+  // Récupérer les qualités du joueur (depuis player.qualities ou depuis le prop qualities)
+  const playerQualities = player.qualities || qualities || []
+  const allQualities = playerQualities.map((q: any) => {
+    if (typeof q === 'string') return q
+    return q.quality || q.libelle || ''
+  }).filter((q: string) => q && q.length > 0)
 
-  const getCompetitionBadgeStyle = (competition: string, category: string) => {
-    const comp = competition?.toLowerCase() || ''
-    const cat = category?.toLowerCase() || ''
-    
-    // Catégories de jeunes
-    if (cat.includes('u15') || comp.includes('u15')) return styles.badgeOrange
-    if (cat.includes('u16') || comp.includes('u16')) return styles.badgeOrange
-    if (cat.includes('u17') || comp.includes('u17')) return styles.badgeBlue
-    if (cat.includes('u18') || comp.includes('u18')) return styles.badgeBlue
-    if (cat.includes('u19') || comp.includes('u19')) return styles.badgeBlue
-    if (cat.includes('u21') || comp.includes('u21')) return styles.badgePurple
-    if (cat.includes('u23') || comp.includes('u23')) return styles.badgePurple
-    
-    // Compétitions professionnelles
-    if (comp.includes('ligue 1') || comp.includes('l1')) return styles.badge
-    if (comp.includes('ligue 2') || comp.includes('l2')) return styles.badge
-    if (comp.includes('serie a')) return styles.badgeBlue
-    if (comp.includes('d1') || comp.includes('division 1')) return styles.badgeBlue
-    if (comp.includes('national')) return styles.badgeGray
-    if (comp.includes('regional') || comp.includes('r1') || comp.includes('r2') || comp.includes('r3')) return styles.badgeTeal
-    
-    return styles.badgeGray
-  }
+  // Vérifier si le joueur est international en regardant ses carrières
+  const internationalCareer = careers?.find((c) => c.isInternationalPlayer)
+  const hasInternationalCareer = !!internationalCareer
+  // Récupérer le pays de l'équipe nationale (peut être différent de la nationalité)
+  const internationalTeamCountry = internationalCareer?.internationalTeamName || player.nationality
 
-  const isCurrentSeason = (career: any) => {
-    if (career.isCurrent) return true
-    if (!career.endDate) return true
-    const endDate = new Date(career.endDate)
+  // Formations du joueur
+  const playerFormations = formations || player.formations || []
+
+  // Fonction pour déterminer si une carrière est la saison en cours
+  const isCurrentSeason = (career: any): boolean => {
     const now = new Date()
-    return endDate >= now
+    const currentYear = now.getFullYear()
+    const currentMonth = now.getMonth() + 1 // 1-12
+    
+    // Déterminer la saison sportive actuelle
+    // Si on est entre janvier et juin, la saison est (année-1)-(année)
+    // Si on est entre juillet et décembre, la saison est (année)-(année+1)
+    let currentSeasonStart: number
+    let currentSeasonEnd: number
+    
+    if (currentMonth >= 7) {
+      // Juillet à Décembre : saison année/année+1
+      currentSeasonStart = currentYear
+      currentSeasonEnd = currentYear + 1
+    } else {
+      // Janvier à Juin : saison année-1/année
+      currentSeasonStart = currentYear - 1
+      currentSeasonEnd = currentYear
+    }
+    
+    // Vérifier via la saison (ex: "2024-2025" ou "2025-2026")
+    if (career.season) {
+      const years = career.season.match(/\d{4}/g)
+      if (years && years.length >= 2) {
+        const seasonStart = parseInt(years[0])
+        const seasonEnd = parseInt(years[1])
+        // La saison correspond à la saison actuelle
+        if (seasonStart === currentSeasonStart && seasonEnd === currentSeasonEnd) {
+          return true
+        }
+      }
+    }
+    
+    // Vérifier via les dates si pas de saison
+    if (!career.season && career.startDate) {
+      // Si pas de date de fin, c'est potentiellement en cours
+      if (!career.endDate) return true
+      // Si la date de fin est dans le futur
+      if (new Date(career.endDate) >= now) return true
+    }
+    
+    return false
   }
 
-  const qualitiesByCategory = groupQualitiesByCategory()
-
-  // Extraire les qualités uniques pour l'affichage
-  const allQualities = qualities?.map((q: any) => q.quality || q.libelle || q) || []
+  // Trier les carrières par année décroissante (plus récent en premier)
+  const sortedCareers = [...(careers || [])].sort((a, b) => {
+    // Extraire l'année de début pour le tri
+    const getStartYear = (career: any): number => {
+      if (career.season) {
+        const years = career.season.match(/\d{4}/g)
+        if (years && years.length > 0) return parseInt(years[0])
+      }
+      if (career.startDate) {
+        return new Date(career.startDate).getFullYear()
+      }
+      return 0
+    }
+    
+    return getStartYear(b) - getStartYear(a) // Ordre décroissant
+  })
 
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        {/* En-tête avec nom, position, photo et terrain */}
+        {/* Header */}
         <View style={styles.header}>
-          <View style={styles.headerLeft}>
-            <View style={styles.flagContainer}>
-              {getNationalityFlag(player.nationality)}
-            </View>
-            <View style={styles.headerText}>
-              <Text style={styles.playerName}>
-                {player.firstName?.toUpperCase()} {player.lastName?.toUpperCase()}
-              </Text>
-              <Text style={styles.playerPosition}>
-                {player.primaryPost ? player.primaryPost.toUpperCase() : ''}
-              </Text>
-              <Text style={styles.playerPositionSecondary}>
-                {getPosteLabel(player.primaryPost)}
-                {player.secondaryPost ? ` / ${getPosteLabel(player.secondaryPost)}` : ''}
-              </Text>
-            </View>
-          </View>
-          <View style={styles.headerPhoto}>
-            {player?.photo && player.photo.length > 50 ? (
-              <Image src={player.photo} style={styles.headerPhotoImage} />
-            ) : (
-              <View style={styles.headerPhotoPlaceholder}>
-                <Text style={{ color: '#666666', fontSize: 8 }}>Photo</Text>
-              </View>
-            )}
+          <View style={styles.headerFlag}>{getNationalityFlag(player.nationality, 36, 26)}</View>
+          <View style={styles.headerNameContainer}>
+            <Text style={styles.headerName}>
+              {player.firstName?.toUpperCase()} {player.lastName?.toUpperCase()}
+            </Text>
+            <Text style={styles.headerPosition}>{player.primaryPost?.toUpperCase() || ''}</Text>
+            <Text style={styles.headerPositionSecondary}>{getPosteLabel(player.primaryPost)}</Text>
           </View>
           <View style={styles.footballFieldContainer}>
-            <FootballField primaryPost={player.primaryPost} secondaryPost={player.secondaryPost} />
+            <FootballField
+              primaryPost={player.primaryPost}
+              secondaryPost={player.secondaryPost}
+              formation={player.favoriteTactic || '4-3-3'}
+            />
           </View>
         </View>
 
-        {/* Contenu en deux colonnes */}
+        {/* Content */}
         <View style={styles.contentContainer}>
-          {/* Colonne de gauche - Fond bleu marine */}
+          {/* Left Column - Dark Blue */}
           <View style={styles.leftColumn}>
-            {/* Section PROFIL */}
-            <View style={styles.section}>
-              <View style={styles.sectionTitle}>
-                <View style={styles.sectionTitleIcon}><UserIcon /></View>
-                <Text>PROFIL</Text>
-              </View>
-              
-              {/* Badge International */}
-              {player.nationality && (
-                <View style={styles.internationalBadge}>
-                  {getNationalityFlag(player.nationality, 14, 10)}
-                  <Text style={styles.internationalText}>
-                    Internationale {player.nationality}
-                  </Text>
-                </View>
-              )}
-
-              <View>
-                <View style={styles.profileItem}>
-                  <View style={styles.profileIcon}><CalendarIcon /></View>
-                  <Text style={styles.profileLabel}>Née le </Text>
-                  <Text style={styles.profileValue}>{formatDate(player.dateOfBirth)}</Text>
-                </View>
-                <View style={styles.profileItem}>
-                  <View style={styles.profileIcon}><FootIcon /></View>
-                  <Text style={styles.profileLabel}>Pied fort </Text>
-                  <Text style={styles.profileValue}>{player.strongFoot || 'N/A'}</Text>
-                </View>
-                <View style={styles.profileItem}>
-                  <View style={styles.profileIcon}><HeightIcon /></View>
-                  <Text style={styles.profileLabel}>Taille </Text>
-                  <Text style={styles.profileValue}>{player.size || '--'} cm</Text>
-                </View>
-                <View style={styles.profileItem}>
-                  <View style={styles.profileIcon}><WeightIcon /></View>
-                  <Text style={styles.profileLabel}>Poids </Text>
-                  <Text style={styles.profileValue}>{player.weight || '--'} kg</Text>
-                </View>
-                {player.vma && (
-                  <View style={styles.profileItem}>
-                    <View style={styles.profileIcon}><SpeedIcon /></View>
-                    <Text style={styles.profileLabel}>VMA </Text>
-                    <Text style={styles.profileValue}>{player.vma} km/h</Text>
+            {/* Photo */}
+            <View style={styles.photoSection}>
+              <View style={styles.photoContainer}>
+                {player?.photo && player.photo.length > 50 ? (
+                  <Image src={player.photo} style={styles.photoImage} />
+                ) : (
+                  <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ color: '#666', fontSize: 8 }}>Photo</Text>
                   </View>
                 )}
               </View>
+            </View>
 
-              {/* Section vidéo/liens */}
-              {(player.linkVideo || player.linkStats) && (
-                <View style={styles.linkSection}>
-                  {player.linkVideo && (
-                    <View style={styles.linkItem}>
-                      <VideoIcon />
-                      <Text style={styles.linkText}>Vidéo disponible</Text>
-                    </View>
-                  )}
-                  {player.linkStats && (
-                    <View style={styles.linkItem}>
-                      <LinkIcon />
-                      <Text style={styles.linkText}>Statistiques</Text>
-                    </View>
-                  )}
+            {/* Profil Section */}
+            <View style={styles.profileSection}>
+              <View style={styles.sectionTitle}>
+                <View style={styles.sectionTitleIcon}>
+                  <UserIcon />
+                </View>
+                <Text>PROFIL</Text>
+              </View>
+
+              {/* Badge International - basé sur les carrières */}
+              {hasInternationalCareer && (
+                <View style={styles.internationalBadge}>
+                  {getNationalityFlag(internationalTeamCountry, 16, 11)}
+                  <Text style={styles.internationalText}>International {internationalTeamCountry}</Text>
+                </View>
+              )}
+
+              <View style={styles.profileItem}>
+                <View style={styles.profileIcon}>
+                  <CalendarIcon />
+                </View>
+                <Text style={styles.profileLabel}>Ne le </Text>
+                <Text style={styles.profileValue}>{formatDate(player.dateOfBirth)}</Text>
+              </View>
+              <View style={styles.profileItem}>
+                <View style={styles.profileIcon}>
+                  <FootIcon />
+                </View>
+                <Text style={styles.profileLabel}>Pied fort - </Text>
+                <Text style={styles.profileValue}>{player.strongFoot || 'N/A'}</Text>
+              </View>
+              <View style={styles.profileItem}>
+                <View style={styles.profileIcon}>
+                  <RulerIcon />
+                </View>
+                <Text style={styles.profileLabel}>Taille - </Text>
+                <Text style={styles.profileValue}>{player.size || '--'} cm</Text>
+              </View>
+              <View style={styles.profileItem}>
+                <View style={styles.profileIcon}>
+                  <WeightIcon />
+                </View>
+                <Text style={styles.profileLabel}>Poids - </Text>
+                <Text style={styles.profileValue}>{player.weight || '--'} kg</Text>
+              </View>
+              {player.vma && (
+                <View style={styles.profileItem}>
+                  <View style={styles.profileIcon}>
+                    <SpeedIcon />
+                  </View>
+                  <Text style={styles.profileLabel}>VMA - </Text>
+                  <Text style={styles.profileValue}>{player.vma} km/h</Text>
                 </View>
               )}
             </View>
 
-            {/* Section QUALITÉS */}
-            {allQualities.length > 0 && (
-              <View style={styles.section}>
-                <View style={styles.sectionTitle}>
-                  <View style={styles.sectionTitleIcon}><CheckIcon /></View>
-                  <Text>QUALITÉS</Text>
-                </View>
-                <View style={styles.qualitiesList}>
-                  {allQualities.slice(0, 8).map((quality: string, idx: number) => (
-                    <Text key={idx} style={styles.qualityItem}>
-                      • {quality}
-                    </Text>
-                  ))}
-                </View>
+            {/* Section Liens CLIQUABLES (stats et vidéo) */}
+            {(player.linkStats || player.linkVideo) && (
+              <View style={styles.linksSection}>
+                {/* Transfermarkt style link for stats */}
+                {player.linkStats && (
+                  <Link src={player.linkStats} style={{ textDecoration: 'none' }}>
+                    <View style={styles.transfermarktContainer}>
+                      <Text style={styles.transfermarktText}>transfer</Text>
+                      <Text style={styles.transfermarktTextRed}>markt</Text>
+                      <View style={styles.externalLinkIcon}>
+                        <ExternalLinkIcon color="#1E3A5F" />
+                      </View>
+                    </View>
+                  </Link>
+                )}
+                {player.linkVideo && (
+                  <Link src={player.linkVideo} style={{ textDecoration: 'none' }}>
+                    <View style={styles.linkItemClickable}>
+                      <VideoIcon />
+                      <Text style={[styles.linkText, { color: '#1E3A5F' }]}>Video highlights</Text>
+                      <View style={{ marginLeft: 'auto' }}>
+                        <ExternalLinkIcon color="#1E3A5F" />
+                      </View>
+                    </View>
+                  </Link>
+                )}
               </View>
             )}
 
-            {/* Section CONTACT */}
-            <View style={styles.section}>
+            {/* Qualités */}
+            {allQualities.length > 0 && (
+              <View style={styles.qualitiesSection}>
+                <View style={styles.sectionTitle}>
+                  <View style={styles.sectionTitleIcon}>
+                    <CheckIcon />
+                  </View>
+                  <Text>QUALITES</Text>
+                </View>
+                {allQualities.slice(0, 10).map((quality: string, idx: number) => (
+                  <View key={idx} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 3 }}>
+                    <View style={{ width: 4, height: 4, borderRadius: 2, backgroundColor: '#FFFFFF', marginRight: 6 }} />
+                    <Text style={{ fontSize: 8, color: '#FFFFFF' }}>{quality}</Text>
+                  </View>
+                ))}
+              </View>
+            )}
+
+            {/* Section FORMATION - NOUVELLE */}
+            {playerFormations && playerFormations.length > 0 && (
+              <View style={styles.formationSection}>
+                <View style={styles.sectionTitle}>
+                  <View style={styles.sectionTitleIcon}>
+                    <GraduationIcon />
+                  </View>
+                  <Text>FORMATION</Text>
+                </View>
+                {playerFormations.map((formation: Formation, idx: number) => (
+                  <View key={idx} style={styles.formationItem}>
+                    <Text style={styles.formationYear}>{formation.year}</Text>
+                    <Text style={styles.formationText}>
+                      {formation.title}
+                      {formation.institution ? ` - ${formation.institution}` : ''}
+                    </Text>
+                    {formation.diploma && (
+                      <Text style={styles.formationDiploma}>{formation.diploma}</Text>
+                    )}
+                  </View>
+                ))}
+              </View>
+            )}
+
+            {/* Contact */}
+            <View style={styles.contactSection}>
               <View style={styles.sectionTitle}>
-                <View style={styles.sectionTitleIcon}><EmailIcon /></View>
+                <View style={styles.sectionTitleIcon}>
+                  <EmailIcon />
+                </View>
                 <Text>CONTACT</Text>
               </View>
-              <View>
-                {player.email && (
+              {player.email && (
+                <Link src={`mailto:${player.email}`} style={{ textDecoration: 'none' }}>
                   <View style={styles.contactItem}>
-                    <View style={styles.contactIcon}><EmailIcon /></View>
-                    <Text>{player.email}</Text>
+                    <View style={styles.contactIcon}>
+                      <EmailIcon />
+                    </View>
+                    <Text style={styles.contactText}>{player.email}</Text>
                   </View>
-                )}
-                {player.telephone && (
+                </Link>
+              )}
+              {player.telephone && (
+                <Link src={`tel:${player.telephone}`} style={{ textDecoration: 'none' }}>
                   <View style={styles.contactItem}>
-                    <View style={styles.contactIcon}><PhoneIcon /></View>
-                    <Text>{player.telephone}</Text>
+                    <View style={styles.contactIcon}>
+                      <PhoneIcon />
+                    </View>
+                    <Text style={styles.contactText}>{player.telephone}</Text>
                   </View>
-                )}
-              </View>
+                </Link>
+              )}
             </View>
           </View>
 
-          {/* Colonne de droite - Fond blanc */}
+          {/* Right Column - White */}
           <View style={styles.rightColumn}>
-            {/* Section CARRIÈRE & STATISTIQUES */}
-            <View style={styles.careerSection}>
-              <Text style={styles.sectionTitleRight}>CARRIÈRE & STATISTIQUES</Text>
-              
-              {careers && careers.length > 0 ? (
-                careers.map((career, index) => {
-                  const years = formatCareerYears(career)
-                  const isCurrent = isCurrentSeason(career)
-                  const isLast = index === careers.length - 1
-                  
-                  return (
-                    <View key={index} style={isLast ? styles.careerItemLast : styles.careerItem}>
-                      {/* Période et Club */}
-                      <View style={styles.careerHeader}>
-                        <View style={styles.careerInfo}>
-                          {/* Années */}
-                          <View style={styles.careerPeriodContainer}>
-                            <Text style={styles.careerPeriodYear}>{years.start}</Text>
-                            {years.end && (
-                              <>
-                                <Text style={styles.careerPeriodArrow}>-</Text>
-                                <Text style={styles.careerPeriodYear}>{years.end}</Text>
-                              </>
-                            )}
-                            <Text style={styles.careerClub}> - {career.club?.name || career.clubName || career.club || 'Club'}</Text>
-                          </View>
+            <Text style={styles.sectionTitleRight}>CARRIERE & STATISTIQUES</Text>
+
+            {sortedCareers && sortedCareers.length > 0 ? (
+              sortedCareers.map((career, index) => {
+                const years = formatCareerYears(career)
+                const isLast = index === sortedCareers.length - 1
+                const competitionBadges = extractCompetitionBadges(career.competition || '')
+                const isCurrent = isCurrentSeason(career)
+
+                return (
+                  <View key={index} style={isLast ? styles.careerItemLast : styles.careerItem}>
+                    <View style={styles.careerHeader}>
+                      <View style={styles.careerInfo}>
+                        {/* Period and Club */}
+                        <View style={styles.careerPeriod}>
+                          <Text style={styles.careerYear}>{years.start}</Text>
+                          {years.end && (
+                            <>
+                              <View style={styles.careerArrowContainer}>
+                              <Svg width="8" height="8" viewBox="0 0 24 24">
+                                <Path d="M8 5v14l11-7z" fill="#DC2626" />
+                              </Svg>
+                            </View>
+                              <Text style={styles.careerYear}>{years.end}</Text>
+                            </>
+                          )}
+                          <Text style={styles.careerClub}>- {career.club?.name || career.clubName || 'Club'}</Text>
+                        </View>
+
+                        {/* Competition with badges and league logo */}
+                        <View style={styles.careerCompetition}>
+                          <Text style={styles.careerCompetitionText}>{career.competition || ''}</Text>
                           
-                          {/* Compétition et badges */}
-                          <View style={styles.careerCompetitionRow}>
-                            <Text style={styles.careerCompetitionText}>
-                              {career.competition || ''}
-                            </Text>
-                            
-                            {/* Badge de catégorie */}
-                            {career.category && (
-                              <Text style={getCompetitionBadgeStyle(career.competition, career.category)}>
-                                {career.category}
-                              </Text>
-                            )}
-                            
-                            {/* Badge compétition type */}
-                            {career.competition?.toLowerCase().includes('d1') && (
-                              <Text style={styles.badgeBlue}>D1</Text>
-                            )}
-                            {career.competition?.toLowerCase().includes('regional') && (
-                              <Text style={styles.badgeTeal}>R1</Text>
-                            )}
-                          </View>
-                          
-                          {/* Badges spéciaux */}
-                          <View style={styles.badgeContainer}>
-                            {/* Saison en cours */}
-                            {isCurrent && (
-                              <View style={styles.badgeWithIcon}>
-                                <View style={styles.badgeGreenContainer}>
-                                  <Text style={styles.badgeTextWhite}>Saison en cours</Text>
-                                </View>
+                          {/* Badges de compétition (N3, U19, R1, etc.) */}
+                          <View style={styles.competitionBadgeContainer}>
+                            {competitionBadges.map((badge, badgeIdx) => (
+                              <View key={badgeIdx} style={[styles.competitionBadge, getCompetitionBadgeStyle(badge)]}>
+                                <Text style={styles.competitionBadgeText}>{badge}</Text>
                               </View>
-                            )}
-                            
-                            {/* Champion */}
-                            {career.isChampionWinner && (
-                              <View style={styles.badgeWithIcon}>
-                                <View style={styles.badgeGoldContainer}>
-                                  <TrophyIconSmall />
-                                  <Text style={styles.badgeTextBlack}>
-                                    Champion{career.nameOfChampionship ? ` ${career.nameOfChampionship}` : ''}
-                                  </Text>
-                                </View>
-                              </View>
-                            )}
-                            
-                            {/* Capitaine */}
-                            {career.isCaptain && (
-                              <View style={styles.badgeWithIcon}>
-                                <View style={styles.badgeGoldContainer}>
-                                  <CrownIconSmall />
-                                  <Text style={styles.badgeTextBlack}>Capitaine</Text>
-                                </View>
-                              </View>
-                            )}
-                            
-                            {/* Meilleur buteur */}
-                            {career.stats?.isBestScorer && (
-                              <View style={styles.badgeWithIcon}>
-                                <View style={styles.badgeGoldContainer}>
-                                  <StarIconSmall />
-                                  <Text style={styles.badgeTextBlack}>Meilleur buteur</Text>
-                                </View>
-                              </View>
-                            )}
-                            
-                            {/* International */}
-                            {career.isInternationalPlayer && (
-                              <View style={styles.badgeWithIcon}>
-                                <View style={styles.badgePurpleContainer}>
-                                  <GlobeIconSmall />
-                                  <Text style={styles.badgeTextWhite}>
-                                    International {career.internationalTeamName || ''}
-                                  </Text>
-                                </View>
-                              </View>
-                            )}
-                          </View>
-                          
-                          {/* Notes de carrière */}
-                          <View style={styles.careerNotes}>
-                            {/* Prêt */}
-                            {career.isLoan && career.loanFrom && (
-                              <Text style={styles.careerNote}>
-                                • Prêtée par le {career.loanFrom}
-                              </Text>
-                            )}
-                            
-                            {/* Sélections internationales */}
-                            {career.isInternationalPlayer && (
-                              <Text style={styles.careerNote}>
-                                • Sélections en Équipe de {career.internationalTeamName || 'France'}
-                              </Text>
-                            )}
-                            
-                            {/* Description personnalisée */}
-                            {career.aboutInternationalSelection && (
-                              <Text style={styles.careerNote}>
-                                • {career.aboutInternationalSelection}
-                              </Text>
-                            )}
-                            
-                            {/* Notes additionnelles */}
-                            {career.notes && career.notes.split('\n').map((note: string, noteIdx: number) => (
-                              <Text key={noteIdx} style={styles.careerNote}>
-                                • {note}
-                              </Text>
                             ))}
                           </View>
+                          
+                          {/* Logo de la ligue/compétition si disponible */}
+                          {career.competitionLogo && (
+                            <View style={styles.competitionLogoContainer}>
+                              <Image src={career.competitionLogo} style={styles.competitionLogo} />
+                            </View>
+                          )}
+                          
+                          {career.category && <Text style={styles.badgeBlue}>{career.category}</Text>}
                         </View>
-                        
-                        {/* Logo du club */}
-                        {career.clubLogo ? (
-                          <Image src={career.clubLogo} style={styles.careerLogo} />
-                        ) : (
-                          <View style={styles.careerLogoPlaceholder} />
+
+                        {/* Badges style amélioré comme l'image */}
+                        <View style={styles.badgeContainer}>
+                          {/* Badge Saison en cours - affiché en premier si c'est la saison actuelle */}
+                          {isCurrent && (
+                            <Text style={styles.badgeGreen}>Saison en cours</Text>
+                          )}
+
+                          {/* Champion - Style Gold arrondi */}
+                          {career.isChampionWinner && (
+                            <View style={styles.badgeGoldStyle}>
+                              <TrophyIcon size={9} color="#000000" />
+                              <Text style={styles.badgeGoldText}>
+                                Champion {career.nameOfChampionship ? career.nameOfChampionship : ''}
+                              </Text>
+                            </View>
+                          )}
+
+                          {/* Capitaine - Style Gold arrondi */}
+                          {career.isCaptain && (
+                            <View style={styles.badgeGoldStyle}>
+                              <CrownIcon size={9} color="#000000" />
+                              <Text style={styles.badgeGoldText}>Capitaine</Text>
+                            </View>
+                          )}
+
+                          {/* International - Style bordure violette */}
+                          {career.isInternationalPlayer && (
+                            <View style={styles.badgePurpleStyle}>
+                              <GlobeIcon size={9} color="#7C3AED" />
+                              <Text style={styles.badgePurpleText}>
+                                International {career.internationalTeamName || ''}
+                              </Text>
+                            </View>
+                          )}
+
+                          {/* Surclassé */}
+                          {career.isUpgraded && (
+                            <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#1E3A5F', paddingVertical: 4, paddingHorizontal: 8, borderRadius: 15 }}>
+                              <ArrowUpIcon size={9} />
+                              <Text style={{ fontSize: 7, color: '#FFFFFF', fontWeight: 'bold', marginLeft: 3 }}>Surclasse</Text>
+                            </View>
+                          )}
+
+                          {/* Transfert mi-saison */}
+                          {career.isChangedClub && (
+                            <View style={styles.badgeOrangeStyle}>
+                              <TransferIcon size={9} color="#F97316" />
+                              <Text style={styles.badgeOrangeText}>
+                                {career.aboutClubChanging || 'Transfert mi-saison'}
+                              </Text>
+                            </View>
+                          )}
+                        </View>
+
+                        {/* Notes International et Transfert */}
+                        <View style={styles.careerNotes}>
+                          {career.isInternationalPlayer && (
+                            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 2 }}>
+                              <View style={{ width: 3, height: 3, borderRadius: 1.5, backgroundColor: '#374151', marginRight: 4 }} />
+                              <Text style={styles.careerNote}>
+                                Selections en Equipe de {career.internationalTeamName}{' '}
+                                {career.internationalCategory ? `(${career.internationalCategory})` : ''}
+                              </Text>
+                              <View style={{ marginLeft: 3 }}>
+                                {getNationalityFlag(career.internationalTeamName || player.nationality, 12, 8)}
+                              </View>
+                            </View>
+                          )}
+                          {career.aboutInternationalSelection && (
+                            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 2 }}>
+                              <View style={{ width: 3, height: 3, borderRadius: 1.5, backgroundColor: '#374151', marginRight: 4 }} />
+                              <Text style={styles.careerNote}>{career.aboutInternationalSelection}</Text>
+                            </View>
+                          )}
+                          {/* Note sur le transfert mi-saison */}
+                          {career.isChangedClub && career.aboutClubChanging && (
+                            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 2 }}>
+                              <View style={{ width: 3, height: 3, borderRadius: 1.5, backgroundColor: '#374151', marginRight: 4 }} />
+                              <Text style={styles.careerNote}>{career.aboutClubChanging}</Text>
+                            </View>
+                          )}
+                        </View>
+
+                        {/* Stats - Ne pas afficher pour la saison en cours */}
+                        {!isCurrent && career.stats && (
+                          <View style={styles.statsContainer}>
+                            {career.stats.goals > 0 && (
+                              <View style={styles.statBox}>
+                                <Text style={styles.statValue}>{career.stats.goals}</Text>
+                                <Text style={styles.statLabel}>buts</Text>
+                              </View>
+                            )}
+                            {career.stats.assists > 0 && (
+                              <View style={styles.statBox}>
+                                <Text style={styles.statValue}>{career.stats.assists}</Text>
+                                <Text style={styles.statLabel}>passes dec.</Text>
+                              </View>
+                            )}
+                            {career.stats.matches > 0 && (
+                              <View style={styles.statBox}>
+                                <Text style={styles.statValue}>{career.stats.matches}</Text>
+                                <Text style={styles.statLabel}>matchs</Text>
+                              </View>
+                            )}
+                            {career.stats.averagePlayingTime > 0 && (
+                              <View style={styles.statBox}>
+                                <Text style={styles.statValue}>{career.stats.averagePlayingTime}'</Text>
+                                <Text style={styles.statLabel}>Temps moyen</Text>
+                              </View>
+                            )}
+                            {(career.stats.cleanSheet > 0 || career.stats.cleanSheets > 0) && (
+                              <View style={styles.statBox}>
+                                <Text style={styles.statValue}>{career.stats.cleanSheet || career.stats.cleanSheets}</Text>
+                                <Text style={styles.statLabel}>clean sheets</Text>
+                              </View>
+                            )}
+                            {/* Badge Meilleur buteur */}
+                            {career.isTopScorer && (
+                              <View style={styles.statSpecial}>
+                                <View style={styles.statSpecialIcon}>
+                                  <TopScorerIcon size={10} />
+                                </View>
+                                <Text style={styles.statSpecialText}>Meilleur buteur</Text>
+                              </View>
+                            )}
+                          </View>
                         )}
                       </View>
 
-                      {/* Stats */}
-                      {career.stats && (
-                        <View style={styles.statsContainer}>
-                          {(career.stats.goals !== null && career.stats.goals !== undefined && career.stats.goals > 0) && (
-                            <View style={styles.statBox}>
-                              <Text style={styles.statValue}>{career.stats.goals}</Text>
-                              <Text style={styles.statLabel}>buts</Text>
-                            </View>
-                          )}
-                          {(career.stats.assists !== null && career.stats.assists !== undefined && career.stats.assists > 0) && (
-                            <View style={styles.statBox}>
-                              <Text style={styles.statValue}>{career.stats.assists}</Text>
-                              <Text style={styles.statLabel}>passes décisives</Text>
-                            </View>
-                          )}
-                          {(career.stats.matches !== null && career.stats.matches !== undefined && career.stats.matches > 0) && (
-                            <View style={styles.statBox}>
-                              <Text style={styles.statValue}>{career.stats.matches}</Text>
-                              <Text style={styles.statLabel}>matchs</Text>
-                            </View>
-                          )}
-                          {(career.stats.averagePlayingTime !== null && career.stats.averagePlayingTime !== undefined && career.stats.averagePlayingTime > 0) && (
-                            <View style={styles.statBox}>
-                              <Text style={styles.statValue}>{career.stats.averagePlayingTime}'</Text>
-                              <Text style={styles.statLabel}>Temps de jeu moyen</Text>
-                            </View>
-                          )}
-                          {(career.stats.cleanSheets !== null && career.stats.cleanSheets !== undefined && career.stats.cleanSheets > 0) && (
-                            <View style={styles.statBox}>
-                              <Text style={styles.statValue}>{career.stats.cleanSheets}</Text>
-                              <Text style={styles.statLabel}>clean sheets</Text>
-                            </View>
-                          )}
-                          {(career.stats.cleanSheet !== null && career.stats.cleanSheet !== undefined && career.stats.cleanSheet > 0) && (
-                            <View style={styles.statBox}>
-                              <Text style={styles.statValue}>{career.stats.cleanSheet}</Text>
-                              <Text style={styles.statLabel}>clean sheets</Text>
-                            </View>
-                          )}
-                        </View>
+                      {/* Club Logo */}
+                      {career.clubLogo ? (
+                        <Image src={career.clubLogo} style={styles.careerLogo} />
+                      ) : (
+                        <View style={styles.careerLogoPlaceholder} />
                       )}
                     </View>
-                  )
-                })
-              ) : (
-                <Text style={{ fontSize: 10, color: '#666666' }}>Aucune carrière enregistrée</Text>
-              )}
-            </View>
+                  </View>
+                )
+              })
+            ) : (
+              <Text style={{ fontSize: 10, color: '#666' }}>Aucune carriere enregistree</Text>
+            )}
           </View>
         </View>
       </Page>

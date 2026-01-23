@@ -94,7 +94,7 @@ export default function DashboardPage() {
       {/* Navigation */}
       <nav className="bg-[#141414] border-b border-gray-800">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-white">Admin - CV Sportif</h1>
+          <h1 className="text-2xl font-bold text-white"></h1>
           <button
             onClick={handleLogout}
             className="flex items-center gap-2 px-4 py-2 bg-red-600/20 text-red-400 rounded-lg hover:bg-red-600/30 transition border border-red-600/50"

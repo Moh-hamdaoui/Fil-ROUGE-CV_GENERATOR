@@ -33,6 +33,7 @@ export function LinksStep() {
       const playerPayload = {
         firstName: data.firstName,
         lastName: data.lastName,
+        gender: data.gender,
         nationality: data.nationality,
         secondaryNationality: data.secondaryNationality || null,
         dateOfBirth: data.dateOfBirth,
@@ -95,6 +96,18 @@ export function LinksStep() {
           const club = await clubRes.json()
           clubId = club.id
 
+          if (data.photo) {
+            const photoRes = await fetch(`${API_URL}/api/players/${playerId}/upload-photo`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ photo: data.photo }),
+            })
+          
+            if (!photoRes.ok) {
+              console.error('Erreur upload photo, mais le joueur a été créé')
+            }
+          }
+
           // Créer la carrière
           const careerPayload = {
             playerId,
@@ -105,6 +118,10 @@ export function LinksStep() {
             startDate: career.startDate || new Date().toISOString(),
             endDate: career.endDate || null,
             isCaptain: career.isCaptain,
+            isUpgraded: career.isUpgraded,
+            internationalCategory: career.internationalCategory,
+            isChangedClub: career.isChangedClub,
+            aboutClubChanging: career.aboutClubChanging,
             isChampionWinner: career.isChampionWinner,
             nameOfChampionship: career.nameOfChampionship || null,
             isInternationalPlayer: career.isInternationalPlayer,
@@ -209,7 +226,6 @@ export function LinksStep() {
         </p>
       </InputGroup>
 
-      {/* Récapitulatif */}
       <div className="p-6 bg-white/5 border border-white/10 rounded-xl space-y-4">
         <h3 className="text-lg font-bold text-white">Récapitulatif</h3>
         <div className="grid grid-cols-2 gap-4 text-sm">

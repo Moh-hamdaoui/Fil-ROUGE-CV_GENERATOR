@@ -124,26 +124,6 @@ export const FORMATIONS: { value: Formation; label: string }[] = [
   { value: '3-5-2', label: '3-5-2' },
 ]
 
-export const NATIONALITIES = [
-  'Française',
-  'Marocaine',
-  'Algérienne',
-  'Tunisienne',
-  'Sénégalaise',
-  'Ivoirienne',
-  'Camerounaise',
-  'Malienne',
-  'Portugaise',
-  'Espagnole',
-  'Italienne',
-  'Belge',
-  'Allemande',
-  'Anglaise',
-  'Brésilienne',
-  'Argentine',
-  'Autre',
-]
-
 export const SEASONS = [
   '2025/2026',
   '2024/2025',

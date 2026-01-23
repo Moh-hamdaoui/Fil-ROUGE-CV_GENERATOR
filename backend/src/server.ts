@@ -6,6 +6,7 @@ import requestsRouter from './routes/requests'
 import clubsRouter from './routes/clubs'
 import qualitiesRouter from './routes/qualities'
 import careersRouter from './routes/careers'
+import formationsRoutes from './routes/formations'
 
 
 dotenv.config()
@@ -22,6 +23,7 @@ app.use('/api/requests', requestsRouter)
 app.use('/api/clubs', clubsRouter)
 app.use('/api/careers', careersRouter)
 app.use('/api/qualities', qualitiesRouter)
+app.use('/api/formations', formationsRoutes) 
 app.use('/uploads', express.static('public/uploads'))
 
 app.get('/', (req, res) => {

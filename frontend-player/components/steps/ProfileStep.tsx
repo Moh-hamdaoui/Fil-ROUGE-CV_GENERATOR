@@ -18,6 +18,7 @@ export function ProfileStep() {
     defaultValues: {
       firstName: data.firstName || '',
       lastName: data.lastName || '',
+      gender: (data.gender as any) || undefined,
       dateOfBirth: data.dateOfBirth || '',
       nationality: data.nationality || '',
       secondaryNationality: data.secondaryNationality || '',
@@ -114,20 +115,33 @@ export function ProfileStep() {
         </InputGroup>
       </div>
 
-      {/* Date de naissance */}
-      <InputGroup 
-        label={<>Date de naissance <span className="text-red-500">*</span></>}
-        error={form.formState.errors.dateOfBirth?.message}
-      >
-        <div className="relative">
-          <input
-            type="date"
-            {...form.register('dateOfBirth')}
+      {/* Date de naissance et Genre */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <InputGroup 
+          label={<>Date de naissance <span className="text-red-500">*</span></>}
+          error={form.formState.errors.dateOfBirth?.message}
+        >
+          <div className="relative">
+            <input
+              type="date"
+              {...form.register('dateOfBirth')}
             className="w-full bg-[#0a0a0a] border border-[#404040] rounded-lg px-4 py-3 text-white focus:border-[#f59e0b] focus:outline-none pl-10"
-          />
-          <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
-        </div>
-      </InputGroup>
+            />
+            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
+          </div>
+        </InputGroup>
+
+        <InputGroup 
+          label={<>Genre <span className="text-red-500">*</span></>}
+          error={form.formState.errors.gender?.message}
+        >
+          <select {...form.register('gender')} className="w-full bg-[#0a0a0a] border border-[#404040] rounded-lg px-4 py-3 text-white focus:border-[#f59e0b] focus:outline-none">
+            <option value="">Sélectionnez</option>
+            <option value="Homme">Homme</option>
+            <option value="Femme">Femme</option>
+          </select>
+        </InputGroup>
+      </div>
 
       {/* Nationalités */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

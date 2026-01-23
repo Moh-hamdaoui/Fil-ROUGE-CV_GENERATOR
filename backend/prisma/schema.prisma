@@ -13,7 +13,8 @@ datasource db {
 model Player {
   id             Int               @id @default(autoincrement())
   firstName      String
-  lastName       String
+  lastName       String       
+  gender         String            @default("Homme") 
   nationality    String
   secondaryNationality String?
   dateOfBirth    DateTime
@@ -83,7 +84,11 @@ model Career {
   isInternationalPlayer  Boolean  @default(false)
   aboutInternationalSelection  String?
   internationalTeamName  String?
+  internationalCategory  String?
+  isChangedClub  Boolean  @default(false)
+  aboutClubChanging String?
   category    String?
+  isUpgraded  Boolean  @default(false)
   isCaptain   Boolean  @default(false)
   isChampionWinner  Boolean  @default(false)
   nameOfChampionship  String?

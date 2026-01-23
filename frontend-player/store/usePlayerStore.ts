@@ -10,11 +10,15 @@ export interface CareerData {
   startDate: string
   endDate: string
   isCaptain: boolean
+  isUpgraded: boolean
   isChampionWinner: boolean
   nameOfChampionship: string
   isInternationalPlayer: boolean
   internationalTeamName: string
   aboutInternationalSelection: string
+  internationalCategory: string
+  isChangedClub:  Boolean
+  aboutClubChanging: string
   stats: {
     matches: number | null
     goals: number | null
@@ -35,6 +39,7 @@ export interface PlayerData {
   // Étape 1: Profil
   firstName: string
   lastName: string
+  gender: string
   dateOfBirth: string
   nationality: string
   secondaryNationality: string
@@ -78,6 +83,7 @@ interface PlayerStore {
 const initialData: Partial<PlayerData> = {
   firstName: '',
   lastName: '',
+  gender: '',
   dateOfBirth: '',
   nationality: '',
   secondaryNationality: '',

@@ -39,8 +39,8 @@ export function QualitiesStep() {
       form.setValue('qualities', updated)
     } else {
       // Ajouter (max 10)
-      if (selectedQualities.length >= 10) {
-        alert('Maximum 10 qualités')
+      if (selectedQualities.length >= 6) {
+        alert('Maximum 6 qualités')
         return
       }
       const updated = [...selectedQualities, { category, quality }]
@@ -67,7 +67,7 @@ export function QualitiesStep() {
           Vos Qualités
         </h2>
         <p className="text-sm text-gray-400">
-          Sélectionnez vos principales qualités (maximum 10).
+          Sélectionnez vos principales qualités (maximum 6).
         </p>
       </div>
 
@@ -75,7 +75,7 @@ export function QualitiesStep() {
       <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10">
         <span className="text-white font-medium">Qualités sélectionnées</span>
         <span className={`text-2xl font-bold ${selectedQualities.length >= 10 ? 'text-red-400' : 'text-[#f59e0b]'}`}>
-          {selectedQualities.length}/10
+          {selectedQualities.length}/6
         </span>
       </div>
 

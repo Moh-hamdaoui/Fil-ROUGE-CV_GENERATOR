@@ -97,10 +97,14 @@ router.post('/', (async (req: Request, res: Response) => {
       category,
       isInternationalPlayer,
       aboutInternationalSelection,
+      internationalCategory,
       internationalTeamName,
       isCaptain,
       isChampionWinner,
       nameOfChampionship,
+      isUpgraded,
+      isChangedClub,
+      aboutClubChanging,
       stats 
     } = req.body
     
@@ -118,9 +122,13 @@ router.post('/', (async (req: Request, res: Response) => {
         internationalTeamName: internationalTeamName || null,
         isCaptain: isCaptain || false,
         isChampionWinner: isChampionWinner || false,
+        internationalCategory: internationalCategory || '',
         nameOfChampionship: nameOfChampionship || null,
+        isUpgraded: isUpgraded || false, 
         clubLogo: null,
         competitionLogo: null,
+        isChangedClub: isChangedClub || false,
+        aboutClubChanging: aboutClubChanging || null,
         stats: stats ? {
           create: {
             matches: stats.matches || 0,
@@ -239,11 +247,15 @@ router.put('/:id', (async (req: Request, res: Response) => {
       category,
       isInternationalPlayer,
       aboutInternationalSelection,
+      internationalCategory,
       internationalTeamName,
       isCaptain,
       isChampionWinner,
       nameOfChampionship,
-      stats 
+      isUpgraded,
+      stats,
+      isChangedClub,
+      aboutClubChanging,
     } = req.body
     
     const career = await prisma.career.update({
@@ -256,10 +268,14 @@ router.put('/:id', (async (req: Request, res: Response) => {
         category,
         isInternationalPlayer,
         aboutInternationalSelection,
+        internationalCategory,
         internationalTeamName,
         isCaptain,
         isChampionWinner,
         nameOfChampionship,
+        isUpgraded,
+        isChangedClub,
+        aboutClubChanging,
       },
       include: {
         club: true,
@@ -318,7 +334,6 @@ router.delete('/:id', (async (req: Request, res: Response) => {
     const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id
     const careerId = parseInt(id, 10)
     
-    // Supprimer la carrière (les stats seront supprimées en cascade grâce à onDelete: Cascade)
     await prisma.career.delete({
       where: { id: careerId },
     })

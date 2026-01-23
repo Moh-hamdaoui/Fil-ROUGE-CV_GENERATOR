@@ -127,6 +127,7 @@ router.post('/', async (req, res) => {
         firstName: data.firstName,
         lastName: data.lastName,
         nationality: data.nationality,
+        gender: data.gender,
         secondaryNationality: data.secondaryNationality || null, 
         dateOfBirth: new Date(data.dateOfBirth),
         email: data.email,
@@ -165,6 +166,7 @@ router.put('/:id', async (req, res) => {
       data: {
         firstName: data.firstName,
         lastName: data.lastName,
+        gender: data.gender,
         nationality: data.nationality,
         dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : undefined,
         email: data.email,

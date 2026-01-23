@@ -3,6 +3,9 @@ import { z } from 'zod'
 export const profileSchema = z.object({
   firstName: z.string().min(2, "Le prénom doit contenir au moins 2 caractères"),
   lastName: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
+  gender: z.enum(["Homme", "Femme"]).refine((val) => !!val, {
+    message: "Sélectionnez votre genre",
+  }),    
   dateOfBirth: z.string().min(1, "La date de naissance est requise"),
   nationality: z.string().min(2, "La nationalité est requise"),
   secondaryNationality: z.string().optional(),
@@ -11,7 +14,6 @@ export const profileSchema = z.object({
   photo: z.string().optional(),
 })
 
-// Étape 2: Physique
 export const physicalSchema = z.object({
   size: z.number().min(100, "Taille minimum 100 cm").max(250, "Taille maximum 250 cm"),
   weight: z.number().min(30, "Poids minimum 30 kg").max(150, "Poids maximum 150 kg"),
@@ -37,7 +39,7 @@ export const qualitiesSchema = z.object({
   qualities: z.array(z.object({
     category: z.string(),
     quality: z.string(),
-  })).min(1, "Sélectionnez au moins une qualité").max(10, "Maximum 10 qualités"),
+  })).min(1, "Sélectionnez au moins une qualité").max(6, "Maximum 6 qualités"),
 })
 
 export const careerItemSchema = z.object({
@@ -52,6 +54,9 @@ export const careerItemSchema = z.object({
   nameOfChampionship: z.string().optional(),
   isInternationalPlayer: z.boolean().default(false),
   internationalTeamName: z.string().optional(),
+  internationalCategory: z.string().optional(),
+  isChangedClub: z.string().optional(),
+  aboutClubChanging: z.string().optional(),
   aboutInternationalSelection: z.string().optional(),
   stats: z.object({
     matches: z.number().nullable().optional(),
@@ -66,7 +71,6 @@ export const careerSchema = z.object({
   careers: z.array(careerItemSchema).min(1, "Ajoutez au moins une saison"),
 })
 
-// Étape 6: Formation
 export const formationItemSchema = z.object({
   institution: z.string().min(2, "L'établissement est requis"),
   diploma: z.string().min(2, "Le diplôme est requis"),
@@ -78,13 +82,11 @@ export const formationSchema = z.object({
   formations: z.array(formationItemSchema).optional(),
 })
 
-// Étape 7: Liens
 export const linksSchema = z.object({
   linkVideo: z.string().url("URL invalide").optional().or(z.literal('')),
   linkStats: z.string().url("URL invalide").optional().or(z.literal('')),
 })
 
-// Types exportés
 export type ProfileData = z.infer<typeof profileSchema>
 export type PhysicalData = z.infer<typeof physicalSchema>
 export type PositionData = z.infer<typeof positionSchema>

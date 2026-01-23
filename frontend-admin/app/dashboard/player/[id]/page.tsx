@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { pdf } from '@react-pdf/renderer'
-import { User, Trophy, Mail, LocateFixed, Star, Image, Upload, Download, Save, Trash, Globe, Award, Link2, School } from 'lucide-react'
+import { User, Trophy, Mail, LocateFixed, Star, Image, Upload, Download, Save, Trash, Globe, Award, Link2, GraduationCap } from 'lucide-react'
 import { CVPDFTemplate } from '@/component/CVPDFTemplate'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
@@ -14,6 +14,54 @@ const QUALITIES = {
   Physique: ['Vitesse', 'Endurance', 'Puissance', 'Détente verticale', 'Agilité', 'Résistance'],
   Mental: ['Leadership', 'Vision du jeu', 'Intelligence tactique', 'Sang-froid', 'Combativité', 'Concentration'],
   Défensif: ['Tacle', 'Interception', 'Marquage', 'Jeu aérien', 'Placement défensif', 'Anticipation']
+}
+
+const NATIONAL_TEAMS = {
+  'UEFA (Europe)': [
+    'Albanie', 'Allemagne', 'Andorre', 'Angleterre', 'Arménie', 'Autriche', 'Azerbaïdjan',
+    'Belgique', 'Biélorussie', 'Bosnie-Herzégovine', 'Bulgarie', 'Chypre', 'Croatie',
+    'Danemark', 'Écosse', 'Espagne', 'Estonie', 'Finlande', 'France', 'Galles', 'Géorgie',
+    'Gibraltar', 'Grèce', 'Hongrie', 'Îles Féroé', 'Irlande', 'Irlande du Nord', 'Islande',
+    'Israël', 'Italie', 'Kazakhstan', 'Kosovo', 'Lettonie', 'Liechtenstein', 'Lituanie',
+    'Luxembourg', 'Macédoine du Nord', 'Malte', 'Moldavie', 'Monaco', 'Monténégro',
+    'Norvège', 'Pays-Bas', 'Pologne', 'Portugal', 'République tchèque', 'Roumanie',
+    'Russie', 'Saint-Marin', 'Serbie', 'Slovaquie', 'Slovénie', 'Suède', 'Suisse',
+    'Turquie', 'Ukraine'
+  ],
+  'CAF (Afrique)': [
+    'Afrique du Sud', 'Algérie', 'Angola', 'Bénin', 'Botswana', 'Burkina Faso', 'Burundi',
+    'Cameroun', 'Cap-Vert', 'Centrafrique', 'Comores', 'Congo', 'Côte d\'Ivoire', 'Djibouti',
+    'Égypte', 'Érythrée', 'Eswatini', 'Éthiopie', 'Gabon', 'Gambie', 'Ghana', 'Guinée',
+    'Guinée équatoriale', 'Guinée-Bissau', 'Kenya', 'Lesotho', 'Liberia', 'Libye',
+    'Madagascar', 'Malawi', 'Mali', 'Maroc', 'Maurice', 'Mauritanie', 'Mozambique',
+    'Namibie', 'Niger', 'Nigeria', 'Ouganda', 'RD Congo', 'Rwanda', 'São Tomé-et-Príncipe',
+    'Sénégal', 'Seychelles', 'Sierra Leone', 'Somalie', 'Soudan', 'Soudan du Sud',
+    'Tanzanie', 'Tchad', 'Togo', 'Tunisie', 'Zambie', 'Zimbabwe'
+  ],
+  'CONMEBOL (Amérique du Sud)': [
+    'Argentine', 'Bolivie', 'Brésil', 'Chili', 'Colombie', 'Équateur', 'Paraguay',
+    'Pérou', 'Uruguay', 'Venezuela'
+  ],
+  'CONCACAF (Amérique du Nord/Centrale)': [
+    'Antigua-et-Barbuda', 'Bahamas', 'Barbade', 'Belize', 'Bermudes', 'Canada',
+    'Costa Rica', 'Cuba', 'Curaçao', 'Dominique', 'El Salvador', 'États-Unis',
+    'Grenade', 'Guatemala', 'Guyana', 'Haïti', 'Honduras', 'Jamaïque', 'Mexique',
+    'Nicaragua', 'Panama', 'Porto Rico', 'République dominicaine', 'Saint-Kitts-et-Nevis',
+    'Saint-Vincent-et-les-Grenadines', 'Sainte-Lucie', 'Suriname', 'Trinité-et-Tobago'
+  ],
+  'AFC (Asie)': [
+    'Afghanistan', 'Arabie saoudite', 'Australie', 'Bahreïn', 'Bangladesh', 'Bhoutan',
+    'Brunei', 'Cambodge', 'Chine', 'Corée du Nord', 'Corée du Sud', 'Émirats arabes unis',
+    'Guam', 'Hong Kong', 'Inde', 'Indonésie', 'Irak', 'Iran', 'Japon', 'Jordanie',
+    'Kirghizistan', 'Koweït', 'Laos', 'Liban', 'Macao', 'Malaisie', 'Maldives', 'Mongolie',
+    'Myanmar', 'Népal', 'Oman', 'Ouzbékistan', 'Pakistan', 'Palestine', 'Philippines',
+    'Qatar', 'Singapour', 'Sri Lanka', 'Syrie', 'Tadjikistan', 'Taipei chinois',
+    'Thaïlande', 'Timor oriental', 'Turkménistan', 'Viêt Nam', 'Yémen'
+  ],
+  'OFC (Océanie)': [
+    'Fidji', 'Nouvelle-Calédonie', 'Nouvelle-Zélande', 'Papouasie-Nouvelle-Guinée',
+    'Îles Salomon', 'Samoa', 'Samoa américaines', 'Tahiti', 'Tonga', 'Vanuatu'
+  ]
 }
 
 // Catégories internationales
@@ -44,6 +92,7 @@ export default function PlayerEditPage() {
   const [saving, setSaving] = useState(false)
   const [activeTab, setActiveTab] = useState('profil')
   const [showCareerModal, setShowCareerModal] = useState(false)
+  const [formations, setFormations] = useState<any[]>([])
   
   // État complet pour nouvelle carrière avec TOUS les champs
   const [newCareer, setNewCareer] = useState({
@@ -61,6 +110,10 @@ export default function PlayerEditPage() {
     isCaptain: false,
     isChampionWinner: false,
     nameOfChampionship: '',
+    isUpgraded: false,
+    internationalCategory: '',
+    isChangedClub: false,
+    aboutClubChanging: '',
     // Stats
     stats: { 
       matches: 0, 
@@ -70,6 +123,15 @@ export default function PlayerEditPage() {
       averagePlayingTime: 0 
     }
   })
+
+  const [showFormationModal, setShowFormationModal] = useState(false)
+  const [editingFormation, setEditingFormation] = useState<any>(null)
+  const [newFormation, setNewFormation] = useState({
+  institution: '',
+  diploma: '',
+  startYear: new Date().getFullYear(),
+  endYear: new Date().getFullYear(),
+})
 
   // État pour gérer les uploads
   const [uploadingLogos, setUploadingLogos] = useState<{
@@ -89,42 +151,36 @@ export default function PlayerEditPage() {
   }, [playerId, router])
 
   const fetchData = async () => {
-    try {
-      const [playerRes, careersRes, qualitiesRes, clubsRes, requestRes] = await Promise.all([
-        fetch(`${API_URL}/api/players/${playerId}`),
-        fetch(`${API_URL}/api/careers/player/${playerId}`),
-        fetch(`${API_URL}/api/qualities/player/${playerId}`),
-        fetch(`${API_URL}/api/clubs`),
-        fetch(`${API_URL}/api/requests/player/${playerId}`) 
-      ])
+  try {
+    const [playerRes, careersRes, qualitiesRes, clubsRes, requestRes, formationsRes] = await Promise.all([
+      fetch(`${API_URL}/api/players/${playerId}`),
+      fetch(`${API_URL}/api/careers/player/${playerId}`),
+      fetch(`${API_URL}/api/qualities/player/${playerId}`),
+      fetch(`${API_URL}/api/clubs`),
+      fetch(`${API_URL}/api/requests/player/${playerId}`),
+      fetch(`${API_URL}/api/formations/player/${playerId}`) // NOUVEAU
+    ])
 
-      const playerData = await playerRes.json()
-      const careersData = await careersRes.json()
-      const qualitiesData = await qualitiesRes.json()
-      const clubsData = await clubsRes.json()
-      const requestData = await requestRes.json()
+    const playerData = await playerRes.json()
+    const careersData = await careersRes.json()
+    const qualitiesData = await qualitiesRes.json()
+    const clubsData = await clubsRes.json()
+    const requestData = await requestRes.json()
+    const formationsData = await formationsRes.json() // NOUVEAU
 
-      setPlayer(playerData)
-      setCareers(careersData)
-      setClubs(clubsData)
-      setPlayerRequest(requestData)
+    setPlayer(playerData)
+    setCareers(careersData)
+    setClubs(clubsData)
+    setPlayerRequest(requestData)
+    setFormations(formationsData) // NOUVEAU
 
-      const qualitiesMap: any = {}
-      Object.keys(QUALITIES).forEach(cat => {
-        qualitiesMap[cat] = {}
-        QUALITIES[cat as keyof typeof QUALITIES].forEach(q => {
-          const existing = qualitiesData.find((qd: any) => qd.quality === q && qd.category === cat)
-          qualitiesMap[cat][q] = existing ? existing.rating : 5
-        })
-      })
-      setQualities(qualitiesMap)
-    } catch (error) {
-      console.error('Erreur:', error)
-    } finally {
-      setLoading(false)
-    }
+    // ... reste du code
+  } catch (error) {
+    console.error('Erreur:', error)
+  } finally {
+    setLoading(false)
   }
-
+}
   const handleMarkAsTreated = async () => {
     if (!playerRequest) return
     
@@ -143,6 +199,59 @@ export default function PlayerEditPage() {
       alert('Erreur lors de la mise à jour')
     }
   }
+
+  const handleAddFormation = async () => {
+  try {
+    const response = await fetch(`${API_URL}/api/formations`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        playerId: parseInt(playerId),
+        institution: newFormation.institution,
+        diploma: newFormation.diploma,
+        startYear: newFormation.startYear,
+        endYear: newFormation.endYear,
+      }),
+    })
+    const data = await response.json()
+    setFormations([...formations, data])
+    setShowFormationModal(false)
+    setNewFormation({
+      institution: '',
+      diploma: '',
+      startYear: new Date().getFullYear(),
+      endYear: new Date().getFullYear(),
+    })
+  } catch (error) {
+    alert('Erreur lors de l\'ajout de la formation')
+  }
+}
+
+const handleUpdateFormation = async (formationId: number, updatedData: any) => {
+  try {
+    const response = await fetch(`${API_URL}/api/formations/${formationId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updatedData),
+    })
+    const data = await response.json()
+    setFormations(formations.map(f => f.id === formationId ? data : f))
+    setEditingFormation(null)
+    alert('Formation mise à jour !')
+  } catch (error) {
+    alert('Erreur lors de la mise à jour')
+  }
+}
+
+const handleDeleteFormation = async (formationId: number) => {
+  if (!confirm('Supprimer cette formation ?')) return
+  try {
+    await fetch(`${API_URL}/api/formations/${formationId}`, { method: 'DELETE' })
+    setFormations(formations.filter(f => f.id !== formationId))
+  } catch (error) {
+    alert('Erreur lors de la suppression')
+  }
+}
 
   const handleSaveProfile = async () => {
     setSaving(true)
@@ -196,6 +305,7 @@ export default function PlayerEditPage() {
           startDate: newCareer.startDate,
           endDate: newCareer.endDate || null,
           category: newCareer.category,
+          internationalCategory: newCareer.internationalCategory,
           // Champs internationaux
           isInternationalPlayer: newCareer.isInternationalPlayer,
           internationalTeamName: newCareer.isInternationalPlayer ? newCareer.internationalTeamName : null,
@@ -204,6 +314,9 @@ export default function PlayerEditPage() {
           isCaptain: newCareer.isCaptain,
           isChampionWinner: newCareer.isChampionWinner,
           nameOfChampionship: newCareer.isChampionWinner ? newCareer.nameOfChampionship : null,
+          isUpgraded: newCareer.isUpgraded, 
+          isChangedClub: newCareer.isChangedClub,
+          aboutClubChanging: newCareer.aboutClubChanging,
           // Stats
           stats: newCareer.stats,
         }),
@@ -222,9 +335,13 @@ export default function PlayerEditPage() {
         isInternationalPlayer: false,
         internationalTeamName: '',
         aboutInternationalSelection: '',
+        internationalCategory: '',
         isCaptain: false,
         isChampionWinner: false,
         nameOfChampionship: '',
+        isUpgraded: false,
+        isChangedClub: false,
+        aboutClubChanging: '',
         stats: { matches: 0, goals: 0, assists: 0, cleanSheet: 0, averagePlayingTime: 0 }
       })
     } catch (error) {
@@ -525,7 +642,20 @@ export default function PlayerEditPage() {
                       />
                     </div>
                   </div>
-
+                  <div className="grid grid-cols-2 gap-4 mt-4">
+                    <div>
+                      <label className="block text-sm text-gray-400 mb-2">Genre</label>
+                      <select
+                        value={player.gender || ''}
+                        onChange={(e) => setPlayer({ ...player, gender: e.target.value })}
+                        className="w-full bg-[#262626] border border-[#404040] rounded-lg px-4 py-3 text-white focus:border-[#f59e0b] focus:outline-none"
+                      >
+                        <option value="">Sélectionnez</option>
+                        <option value="Homme">Homme</option>
+                        <option value="Femme">Femme</option>
+                      </select>
+                    </div>
+                     </div>
                   <div className="grid grid-cols-2 gap-4 mt-4">
                     <div>
                       <label className="block text-sm text-gray-400 mb-2">Date de naissance</label>
@@ -780,6 +910,16 @@ export default function PlayerEditPage() {
                                   International {career.internationalTeamName}
                                 </span>
                               )}
+                              {career.isUpgraded && (
+                                <span className="px-2 py-1 bg-[#3B82F6]/20 border border-[#3B82F6] text-[#3B82F6] rounded text-xs font-medium">
+                                  Surclassé
+                                </span>
+                              )}
+                              {career.isChangedClub && (
+                                <span className="px-2 py-1 bg-[#F97316]/20 border border-[#F97316] text-[#F97316] rounded text-xs font-medium">
+                                  Transfert mi-saison {career.aboutClubChanging && `- ${career.aboutClubChanging}`}
+                                </span>
+                              )}
                             </div>
                             <p className="text-gray-400 text-sm mt-1">
                               {career.category && <span className="text-[#f59e0b]">{career.category} • </span>}
@@ -863,10 +1003,133 @@ export default function PlayerEditPage() {
                         </div>
                       </div>
 
+                      {/* Badges / Accomplissements éditables */}
+                      <div className="mb-6 p-4 bg-[#0a0a0a] rounded-lg">
+                        <p className="text-gray-400 text-sm font-medium mb-4">Accomplissements</p>
+                        <div className="flex flex-wrap gap-3">
+                          {/* Capitaine */}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setCareers(careers.map(c =>
+                                c.id === career.id
+                                  ? { ...c, isCaptain: !c.isCaptain }
+                                  : c
+                              ))
+                            }}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all ${
+                              career.isCaptain
+                                ? 'bg-[#FFD700]/20 border-[#FFD700] text-[#FFD700]'
+                                : 'bg-white/5 border-white/10 text-white/50 hover:border-white/20'
+                            }`}
+                          >
+                            <span>👑</span>
+                            <span className="text-sm font-medium">Capitaine</span>
+                          </button>
+
+                          {/* Champion */}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setCareers(careers.map(c =>
+                                c.id === career.id
+                                  ? { ...c, isChampionWinner: !c.isChampionWinner }
+                                  : c
+                              ))
+                            }}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all ${
+                              career.isChampionWinner
+                                ? 'bg-[#FFD700]/20 border-[#FFD700] text-[#FFD700]'
+                                : 'bg-white/5 border-white/10 text-white/50 hover:border-white/20'
+                            }`}
+                          >
+                            <span>🏆</span>
+                            <span className="text-sm font-medium">Champion</span>
+                          </button>
+
+                          {/* Surclassé */}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setCareers(careers.map(c =>
+                                c.id === career.id
+                                  ? { ...c, isUpgraded: !c.isUpgraded }
+                                  : c
+                              ))
+                            }}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all ${
+                              career.isUpgraded
+                                ? 'bg-[#3B82F6]/20 border-[#3B82F6] text-[#3B82F6]'
+                                : 'bg-white/5 border-white/10 text-white/50 hover:border-white/20'
+                            }`}
+                          >
+                            <span>⬆️</span>
+                            <span className="text-sm font-medium">Surclassé</span>
+                          </button>
+                          <button
+                                type="button"
+                                onClick={() => {
+                                  setCareers(careers.map(c =>
+                                    c.id === career.id
+                                      ? { ...c, isChangedClub: !c.isChangedClub }
+                                      : c
+                                  ))
+                                }}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all ${
+                                  career.isChangedClub
+                                    ? 'bg-[#F97316]/20 border-[#F97316] text-[#F97316]'
+                                    : 'bg-white/5 border-white/10 text-white/50 hover:border-white/20'
+                                }`}
+                            >
+                            <span>🔄</span>
+                            <span className="text-sm font-medium">Transfert mi-saison</span>
+                          </button>
+                        </div>
+
+                        {/* Nom du championnat si champion */}
+                        {career.isChampionWinner && (
+                          <div className="mt-4">
+                            <label className="block text-xs text-gray-500 mb-2">Nom du championnat</label>
+                            <input
+                              type="text"
+                              placeholder="Ex: Championnat U19 National"
+                              value={career.nameOfChampionship || ''}
+                              onChange={(e) => {
+                                setCareers(careers.map(c =>
+                                  c.id === career.id
+                                    ? { ...c, nameOfChampionship: e.target.value }
+                                    : c
+                                ))
+                              }}
+                              className="w-full bg-[#1a1a1a] border border-[#404040] rounded-lg px-4 py-2 text-white focus:border-[#f59e0b] focus:outline-none text-sm"
+                            />
+                          </div>
+                        )}
+                        {/* Détails du transfert si changement de club */}
+{career.isChangedClub && (
+  <div className="mt-4">
+    <label className="block text-xs text-gray-500 mb-2">Précisions sur le transfert</label>
+    <input
+      type="text"
+      placeholder="Ex: Prêt depuis le PSG en janvier, Transfert mercato hivernal..."
+      value={career.aboutClubChanging || ''}
+      onChange={(e) => {
+        setCareers(careers.map(c =>
+          c.id === career.id
+            ? { ...c, aboutClubChanging: e.target.value }
+            : c
+        ))
+      }}
+      className="w-full bg-[#1a1a1a] border border-[#404040] rounded-lg px-4 py-2 text-white focus:border-[#F97316] focus:outline-none text-sm"
+    />
+  </div>
+)}
+                      </div>
+
                       {/* Statistiques */}
                       <div>
                         <p className="text-gray-400 text-sm font-medium mb-4">Statistiques</p>
-                        <div className="grid grid-cols-5 gap-4">
+                        <div className={`grid gap-4 ${player.primaryPost === 'GB' ? 'grid-cols-3' : 'grid-cols-4'}`}>
                           <div>
                             <label className="block text-xs text-gray-500 mb-2">Matchs joués</label>
                             <div className="flex items-center gap-2 bg-[#0a0a0a] rounded-lg p-2">
@@ -884,57 +1147,65 @@ export default function PlayerEditPage() {
                               />
                             </div>
                           </div>
-                          <div>
-                            <label className="block text-xs text-gray-500 mb-2">Buts</label>
-                            <div className="flex items-center gap-2 bg-[#0a0a0a] rounded-lg p-2">
-                              <input
-                                type="number"
-                                value={career.stats?.goals || 0}
-                                onChange={(e) => {
-                                  setCareers(careers.map(c =>
-                                    c.id === career.id
-                                      ? { ...c, stats: { ...c.stats, goals: parseInt(e.target.value) || 0 } }
-                                      : c
-                                  ))
-                                }}
-                                className="bg-transparent border-0 text-[#f59e0b] font-bold text-lg w-full focus:outline-none"
-                              />
+                          
+                          {/* Gardien: Clean sheets */}
+                          {player.primaryPost === 'GB' ? (
+                            <div>
+                              <label className="block text-xs text-gray-500 mb-2">Clean sheets</label>
+                              <div className="flex items-center gap-2 bg-[#0a0a0a] rounded-lg p-2">
+                                <input
+                                  type="number"
+                                  value={career.stats?.cleanSheet || 0}
+                                  onChange={(e) => {
+                                    setCareers(careers.map(c =>
+                                      c.id === career.id
+                                        ? { ...c, stats: { ...c.stats, cleanSheet: parseInt(e.target.value) || 0 } }
+                                        : c
+                                    ))
+                                  }}
+                                  className="bg-transparent border-0 text-purple-400 font-bold text-lg w-full focus:outline-none"
+                                />
+                              </div>
                             </div>
-                          </div>
-                          <div>
-                            <label className="block text-xs text-gray-500 mb-2">Passes D.</label>
-                            <div className="flex items-center gap-2 bg-[#0a0a0a] rounded-lg p-2">
-                              <input
-                                type="number"
-                                value={career.stats?.assists || 0}
-                                onChange={(e) => {
-                                  setCareers(careers.map(c =>
-                                    c.id === career.id
-                                      ? { ...c, stats: { ...c.stats, assists: parseInt(e.target.value) || 0 } }
-                                      : c
-                                  ))
-                                }}
-                                className="bg-transparent border-0 text-[#22c55e] font-bold text-lg w-full focus:outline-none"
-                              />
-                            </div>
-                          </div>
-                          <div>
-                            <label className="block text-xs text-gray-500 mb-2">Clean sheets</label>
-                            <div className="flex items-center gap-2 bg-[#0a0a0a] rounded-lg p-2">
-                              <input
-                                type="number"
-                                value={career.stats?.cleanSheet || 0}
-                                onChange={(e) => {
-                                  setCareers(careers.map(c =>
-                                    c.id === career.id
-                                      ? { ...c, stats: { ...c.stats, cleanSheet: parseInt(e.target.value) || 0 } }
-                                      : c
-                                  ))
-                                }}
-                                className="bg-transparent border-0 text-purple-400 font-bold text-lg w-full focus:outline-none"
-                              />
-                            </div>
-                          </div>
+                          ) : (
+                            <>
+                              <div>
+                                <label className="block text-xs text-gray-500 mb-2">Buts</label>
+                                <div className="flex items-center gap-2 bg-[#0a0a0a] rounded-lg p-2">
+                                  <input
+                                    type="number"
+                                    value={career.stats?.goals || 0}
+                                    onChange={(e) => {
+                                      setCareers(careers.map(c =>
+                                        c.id === career.id
+                                          ? { ...c, stats: { ...c.stats, goals: parseInt(e.target.value) || 0 } }
+                                          : c
+                                      ))
+                                    }}
+                                    className="bg-transparent border-0 text-[#f59e0b] font-bold text-lg w-full focus:outline-none"
+                                  />
+                                </div>
+                              </div>
+                              <div>
+                                <label className="block text-xs text-gray-500 mb-2">Passes D.</label>
+                                <div className="flex items-center gap-2 bg-[#0a0a0a] rounded-lg p-2">
+                                  <input
+                                    type="number"
+                                    value={career.stats?.assists || 0}
+                                    onChange={(e) => {
+                                      setCareers(careers.map(c =>
+                                        c.id === career.id
+                                          ? { ...c, stats: { ...c.stats, assists: parseInt(e.target.value) || 0 } }
+                                          : c
+                                      ))
+                                    }}
+                                    className="bg-transparent border-0 text-[#22c55e] font-bold text-lg w-full focus:outline-none"
+                                  />
+                                </div>
+                              </div>
+                            </>
+                          )}
+
                           <div>
                             <label className="block text-xs text-gray-500 mb-2">Temps moyen</label>
                             <div className="flex items-center gap-2 bg-[#0a0a0a] rounded-lg p-2">
@@ -976,6 +1247,9 @@ export default function PlayerEditPage() {
                                   isCaptain: career.isCaptain,
                                   isChampionWinner: career.isChampionWinner,
                                   nameOfChampionship: career.nameOfChampionship,
+                                  isUpgraded: career.isUpgraded,
+                                  isChangedClub: career.isChangedClub,        
+                                  aboutClubChanging: career.aboutClubChanging,   
                                   stats: career.stats
                                 })
                               })
@@ -1055,7 +1329,7 @@ export default function PlayerEditPage() {
                             <option value="U21">U21</option>
                             <option value="U23">U23</option>
                             <option value="Reserve">Réserve</option>
-                            <option value="Senior">Senior</option>
+                            <option value="Senior">Séniors</option>
                           </select>
                         </div>
                       </div>
@@ -1087,12 +1361,12 @@ export default function PlayerEditPage() {
                           <Award size={18} className="text-[#FFD700]" />
                           Accomplissements
                         </h4>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-3 gap-4">
                           {/* Capitaine */}
                           <div className="flex items-center justify-between bg-[#1a1a1a] rounded-lg p-3">
                             <div className="flex items-center gap-2">
                               <span className="text-yellow-500">👑</span>
-                              <span className="text-white text-sm">Capitaine de l'équipe</span>
+                              <span className="text-white text-sm">Capitaine</span>
                             </div>
                             <button
                               type="button"
@@ -1111,7 +1385,7 @@ export default function PlayerEditPage() {
                           <div className="flex items-center justify-between bg-[#1a1a1a] rounded-lg p-3">
                             <div className="flex items-center gap-2">
                               <span className="text-yellow-500">🏆</span>
-                              <span className="text-white text-sm">Championnat remporté</span>
+                              <span className="text-white text-sm">Champion</span>
                             </div>
                             <button
                               type="button"
@@ -1122,6 +1396,24 @@ export default function PlayerEditPage() {
                             >
                               <div className={`w-5 h-5 bg-white rounded-full transition-transform ${
                                 newCareer.isChampionWinner ? 'translate-x-6' : 'translate-x-1'
+                              }`} />
+                            </button>
+                          </div>
+
+                          <div className="flex items-center justify-between bg-[#1a1a1a] rounded-lg p-3">
+                            <div className="flex items-center gap-2">
+                              <span className="text-blue-500">⬆️</span>
+                              <span className="text-white text-sm">Surclassé</span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => setNewCareer({ ...newCareer, isUpgraded: !newCareer.isUpgraded })}
+                              className={`w-12 h-6 rounded-full transition-colors ${
+                                newCareer.isUpgraded ? 'bg-[#3B82F6]' : 'bg-gray-600'
+                              }`}
+                            >
+                              <div className={`w-5 h-5 bg-white rounded-full transition-transform ${
+                                newCareer.isUpgraded ? 'translate-x-6' : 'translate-x-1'
                               }`} />
                             </button>
                           </div>
@@ -1140,8 +1432,42 @@ export default function PlayerEditPage() {
                             />
                           </div>
                         )}
+                        
                       </div>
+{/* Section: Transfert en cours de saison */}
+<div className="bg-[#0a0a0a] rounded-xl p-4">
+  <div className="flex items-center justify-between mb-4">
+    <div className="flex items-center gap-2">
+      <span className="text-xl">🔄</span>
+      <h4 className="text-md font-bold text-white">Transfert en cours de saison</h4>
+      <span className="text-xs text-gray-500">Mercato hivernal, prêt...</span>
+    </div>
+    <button
+      type="button"
+      onClick={() => setNewCareer({ ...newCareer, isChangedClub: !newCareer.isChangedClub })}
+      className={`w-12 h-6 rounded-full transition-colors ${
+        newCareer.isChangedClub ? 'bg-[#F97316]' : 'bg-gray-600'
+      }`}
+    >
+      <div className={`w-5 h-5 bg-white rounded-full transition-transform ${
+        newCareer.isChangedClub ? 'translate-x-6' : 'translate-x-1'
+      }`} />
+    </button>
+  </div>
 
+  {newCareer.isChangedClub && (
+    <div className="space-y-1 mt-4 pt-4 border-t border-gray-800">
+      <label className="text-sm text-gray-400 mb-2 block">Précisions sur le transfert</label>
+      <textarea
+        placeholder="Ex: Arrivé en prêt du PSG en janvier, Transfert définitif mercato hivernal depuis l'OL..."
+        value={newCareer.aboutClubChanging}
+        onChange={(e) => setNewCareer({ ...newCareer, aboutClubChanging: e.target.value })}
+        rows={2}
+        className="w-full bg-[#1a1a1a] border border-[#404040] rounded-lg px-4 py-3 text-white focus:border-[#F97316] focus:outline-none resize-none"
+      />
+    </div>
+  )}
+</div>
                       {/* Section 3: Joueur International */}
                       <div className="bg-[#0a0a0a] rounded-xl p-4">
                         <div className="flex items-center justify-between mb-4">
@@ -1163,52 +1489,59 @@ export default function PlayerEditPage() {
                           </button>
                         </div>
 
-                        {/* Champs conditionnels si international */}
-                        {newCareer.isInternationalPlayer && (
-                          <div className="space-y-4 mt-4 pt-4 border-t border-gray-800">
-                            <div className="grid grid-cols-2 gap-4">
-                              <div>
-                                <label className="block text-sm text-gray-400 mb-2">Sélection / Équipe nationale</label>
-                                <input
-                                  type="text"
-                                  placeholder="Ex: France, Maroc..."
-                                  value={newCareer.internationalTeamName}
-                                  onChange={(e) => setNewCareer({ ...newCareer, internationalTeamName: e.target.value })}
-                                  className="w-full bg-[#1a1a1a] border border-[#404040] rounded-lg px-4 py-3 text-white focus:border-[#7C3AED] focus:outline-none"
-                                />
-                              </div>
-                              <div>
-                                <label className="block text-sm text-gray-400 mb-2">Catégorie internationale</label>
-                                <select
-                                  value={newCareer.category}
-                                  onChange={(e) => setNewCareer({ ...newCareer, category: e.target.value })}
-                                  className="w-full bg-[#1a1a1a] border border-[#404040] rounded-lg px-4 py-3 text-white focus:border-[#7C3AED] focus:outline-none"
-                                >
-                                  <option value="">Sélectionnez</option>
-                                  {INTERNATIONAL_CATEGORIES.map(cat => (
-                                    <option key={cat} value={cat}>{cat}</option>
-                                  ))}
-                                </select>
-                              </div>
-                            </div>
-                            <div>
-                              <label className="block text-sm text-gray-400 mb-2">À propos de la sélection (optionnel)</label>
-                              <textarea
-                                placeholder="Ex: Première sélection avec le Maroc U18, participation à la CAN U17..."
-                                value={newCareer.aboutInternationalSelection}
-                                onChange={(e) => setNewCareer({ ...newCareer, aboutInternationalSelection: e.target.value })}
-                                rows={2}
-                                className="w-full bg-[#1a1a1a] border border-[#404040] rounded-lg px-4 py-3 text-white focus:border-[#7C3AED] focus:outline-none resize-none"
-                              />
-                            </div>
-                          </div>
-                        )}
+                 
+{newCareer.isInternationalPlayer && (
+  <div className="space-y-4 mt-4 pt-4 border-t border-gray-800">
+    <div className="grid grid-cols-2 gap-4">
+      <div>
+        <label className="block text-sm text-gray-400 mb-2">Sélection / Équipe nationale</label>
+        <select
+          value={newCareer.internationalTeamName}
+          onChange={(e) => setNewCareer({ ...newCareer, internationalTeamName: e.target.value })}
+          className="w-full bg-[#1a1a1a] border border-[#404040] rounded-lg px-4 py-3 text-white focus:border-[#7C3AED] focus:outline-none"
+        >
+          <option value="">Sélectionner un pays...</option>
+          {Object.entries(NATIONAL_TEAMS).map(([confederation, teams]) => (
+            <optgroup key={confederation} label={confederation}>
+              {teams.map(team => (
+                <option key={team} value={team}>{team}</option>
+              ))}
+            </optgroup>
+          ))}
+        </select>
+      </div>
+      <div>
+        <label className="block text-sm text-gray-400 mb-2">Catégorie internationale</label>
+        <select
+          value={newCareer.internationalCategory}
+          onChange={(e) => setNewCareer({ ...newCareer, internationalCategory: e.target.value })}
+          className="w-full bg-[#1a1a1a] border border-[#404040] rounded-lg px-4 py-3 text-white focus:border-[#7C3AED] focus:outline-none"
+        >
+          <option value="">Sélectionnez</option>
+          {INTERNATIONAL_CATEGORIES.map(cat => (
+            <option key={cat} value={cat}>{cat}</option>
+          ))}
+        </select>
+      </div>
+    </div>
+    <div>
+      <label className="block text-sm text-gray-400 mb-2">À propos de la sélection (optionnel)</label>
+      <textarea
+        placeholder="Ex: Première sélection avec le Maroc U18, participation à la CAN U17..."
+        value={newCareer.aboutInternationalSelection}
+        onChange={(e) => setNewCareer({ ...newCareer, aboutInternationalSelection: e.target.value })}
+        rows={2}
+        className="w-full bg-[#1a1a1a] border border-[#404040] rounded-lg px-4 py-3 text-white focus:border-[#7C3AED] focus:outline-none resize-none"
+      />
+    </div>
+  </div>
+)}
                       </div>
 
                       {/* Section 4: Statistiques */}
                       <div>
                         <h4 className="text-lg font-bold text-white mb-4">Statistiques</h4>
-                        <div className="grid grid-cols-5 gap-4">
+                        <div className={`grid gap-4 ${player.primaryPost === 'GB' ? 'grid-cols-3' : 'grid-cols-4'}`}>
                           <div>
                             <label className="block text-sm text-gray-400 mb-2">Matchs *</label>
                             <input
@@ -1221,42 +1554,50 @@ export default function PlayerEditPage() {
                               className="w-full bg-[#0a0a0a] border border-[#404040] rounded-lg px-4 py-3 text-white focus:border-[#f59e0b] focus:outline-none"
                             />
                           </div>
-                          <div>
-                            <label className="block text-sm text-gray-400 mb-2">Buts</label>
-                            <input
-                              type="number"
-                              value={newCareer.stats.goals}
-                              onChange={(e) => setNewCareer({
-                                ...newCareer,
-                                stats: { ...newCareer.stats, goals: parseInt(e.target.value) || 0 }
-                              })}
-                              className="w-full bg-[#0a0a0a] border border-[#404040] rounded-lg px-4 py-3 text-white focus:border-[#f59e0b] focus:outline-none"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm text-gray-400 mb-2">Passes D.</label>
-                            <input
-                              type="number"
-                              value={newCareer.stats.assists}
-                              onChange={(e) => setNewCareer({
-                                ...newCareer,
-                                stats: { ...newCareer.stats, assists: parseInt(e.target.value) || 0 }
-                              })}
-                              className="w-full bg-[#0a0a0a] border border-[#404040] rounded-lg px-4 py-3 text-white focus:border-[#f59e0b] focus:outline-none"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm text-gray-400 mb-2">Clean sheets</label>
-                            <input
-                              type="number"
-                              value={newCareer.stats.cleanSheet}
-                              onChange={(e) => setNewCareer({
-                                ...newCareer,
-                                stats: { ...newCareer.stats, cleanSheet: parseInt(e.target.value) || 0 }
-                              })}
-                              className="w-full bg-[#0a0a0a] border border-[#404040] rounded-lg px-4 py-3 text-white focus:border-[#f59e0b] focus:outline-none"
-                            />
-                          </div>
+                          
+                          {/* Gardien: Clean sheets */}
+                          {player.primaryPost === 'GB' ? (
+                            <div>
+                              <label className="block text-sm text-gray-400 mb-2">Clean sheets</label>
+                              <input
+                                type="number"
+                                value={newCareer.stats.cleanSheet}
+                                onChange={(e) => setNewCareer({
+                                  ...newCareer,
+                                  stats: { ...newCareer.stats, cleanSheet: parseInt(e.target.value) || 0 }
+                                })}
+                                className="w-full bg-[#0a0a0a] border border-[#404040] rounded-lg px-4 py-3 text-white focus:border-[#f59e0b] focus:outline-none"
+                              />
+                            </div>
+                          ) : (
+                            <>
+                              <div>
+                                <label className="block text-sm text-gray-400 mb-2">Buts</label>
+                                <input
+                                  type="number"
+                                  value={newCareer.stats.goals}
+                                  onChange={(e) => setNewCareer({
+                                    ...newCareer,
+                                    stats: { ...newCareer.stats, goals: parseInt(e.target.value) || 0 }
+                                  })}
+                                  className="w-full bg-[#0a0a0a] border border-[#404040] rounded-lg px-4 py-3 text-white focus:border-[#f59e0b] focus:outline-none"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm text-gray-400 mb-2">Passes D.</label>
+                                <input
+                                  type="number"
+                                  value={newCareer.stats.assists}
+                                  onChange={(e) => setNewCareer({
+                                    ...newCareer,
+                                    stats: { ...newCareer.stats, assists: parseInt(e.target.value) || 0 }
+                                  })}
+                                  className="w-full bg-[#0a0a0a] border border-[#404040] rounded-lg px-4 py-3 text-white focus:border-[#f59e0b] focus:outline-none"
+                                />
+                              </div>
+                            </>
+                          )}
+
                           <div>
                             <label className="block text-sm text-gray-400 mb-2">Temps moyen (min)</label>
                             <input
@@ -1291,29 +1632,204 @@ export default function PlayerEditPage() {
                   </div>
                 </div>
               )}
+              {/* Section Formation */}
+<div className="bg-[#1a1a1a] rounded-xl p-6 mt-6">
+  <div className="flex items-center justify-between mb-6">
+    <h2 className="text-xl font-bold text-white flex items-center gap-2">
+      <GraduationCap size={20} className="text-[#f59e0b]" />
+      Formation ({formations.length})
+    </h2>
+    <button
+      onClick={() => setShowFormationModal(true)}
+      className="px-4 py-2 bg-[#f59e0b] text-black rounded-lg font-medium hover:bg-[#d97706] transition text-sm"
+    >
+      + Ajouter
+    </button>
+  </div>
+
+  {formations.length === 0 ? (
+    <p className="text-gray-400 text-center py-4">Aucune formation enregistrée</p>
+  ) : (
+    <div className="space-y-4">
+      {formations.map((formation) => (
+        <div key={formation.id} className="bg-[#0a0a0a] rounded-lg p-4 border border-gray-800">
+          {editingFormation?.id === formation.id ? (
+            // Mode édition
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs text-gray-500 mb-2">Établissement</label>
+                  <input
+                    type="text"
+                    value={editingFormation.institution}
+                    onChange={(e) => setEditingFormation({ ...editingFormation, institution: e.target.value })}
+                    className="w-full bg-[#1a1a1a] border border-[#404040] rounded-lg px-4 py-2 text-white focus:border-[#f59e0b] focus:outline-none text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 mb-2">Diplôme</label>
+                  <input
+                    type="text"
+                    value={editingFormation.diploma}
+                    onChange={(e) => setEditingFormation({ ...editingFormation, diploma: e.target.value })}
+                    className="w-full bg-[#1a1a1a] border border-[#404040] rounded-lg px-4 py-2 text-white focus:border-[#f59e0b] focus:outline-none text-sm"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs text-gray-500 mb-2">Année début</label>
+                  <input
+                    type="number"
+                    value={editingFormation.startYear}
+                    onChange={(e) => setEditingFormation({ ...editingFormation, startYear: parseInt(e.target.value) })}
+                    className="w-full bg-[#1a1a1a] border border-[#404040] rounded-lg px-4 py-2 text-white focus:border-[#f59e0b] focus:outline-none text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 mb-2">Année fin</label>
+                  <input
+                    type="number"
+                    value={editingFormation.endYear}
+                    onChange={(e) => setEditingFormation({ ...editingFormation, endYear: parseInt(e.target.value) })}
+                    className="w-full bg-[#1a1a1a] border border-[#404040] rounded-lg px-4 py-2 text-white focus:border-[#f59e0b] focus:outline-none text-sm"
+                  />
+                </div>
+              </div>
+              <div className="flex gap-2 justify-end">
+                <button
+                  onClick={() => setEditingFormation(null)}
+                  className="px-4 py-2 bg-gray-700 text-white rounded-lg text-sm hover:bg-gray-600 transition"
+                >
+                  Annuler
+                </button>
+                <button
+                  onClick={() => handleUpdateFormation(formation.id, editingFormation)}
+                  className="px-4 py-2 bg-[#22c55e] text-black rounded-lg text-sm font-medium hover:bg-[#16a34a] transition"
+                >
+                  Sauvegarder
+                </button>
+              </div>
+            </div>
+          ) : (
+            // Mode affichage
+            <div className="flex items-center justify-between">
               <div>
-                <div className="bg-[#1a1a1a] rounded-xl p-6 mt-6">
-                <div className="flex items-center gap-3 mb-6">
-                  <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                    <School size={20} className="text-[#f59e0b]" />Formation
-                  </h2>
+                <div className="flex items-center gap-3">
+                  <span className="text-[#f59e0b] font-bold">{formation.startYear} - {formation.endYear}</span>
+                  <h4 className="text-white font-medium">{formation.institution}</h4>
                 </div>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm text-gray-400 mb-2"></label>
-                    <input
-                      className="w-full bg-[#262626] border border-[#404040] rounded-lg px-4 py-3 text-white focus:border-[#f59e0b] focus:outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm text-gray-400 mb-2"></label>
-                    <input
-                      className="w-full bg-[#262626] border border-[#404040] rounded-lg px-4 py-3 text-white focus:border-[#f59e0b] focus:outline-none"
-                    />
-                  </div>
-                </div>
+                <p className="text-gray-400 text-sm mt-1">{formation.diploma}</p>
               </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setEditingFormation({ ...formation })}
+                  className="p-2 text-gray-400 hover:text-[#f59e0b] transition"
+                  title="Modifier"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                  </svg>
+                </button>
+                <button
+                  onClick={() => handleDeleteFormation(formation.id)}
+                  className="p-2 text-gray-400 hover:text-red-500 transition"
+                  title="Supprimer"
+                >
+                  <Trash size={18} />
+                </button>
               </div>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  )}
+</div>
+
+{/* Modal d'ajout de formation */}
+{showFormationModal && (
+  <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+    <div className="bg-[#141414] rounded-2xl p-6 w-full max-w-lg border border-gray-800">
+      <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+        <GraduationCap size={20} className="text-[#f59e0b]" />
+        Ajouter une formation
+      </h3>
+
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm text-gray-400 mb-2">Établissement *</label>
+          <input
+            type="text"
+            placeholder="Ex: Lycée Sport-Études Jean Moulin"
+            value={newFormation.institution}
+            onChange={(e) => setNewFormation({ ...newFormation, institution: e.target.value })}
+            className="w-full bg-[#0a0a0a] border border-[#404040] rounded-lg px-4 py-3 text-white focus:border-[#f59e0b] focus:outline-none"
+          />
+        </div>
+        <div>
+          <label className="block text-sm text-gray-400 mb-2">Diplôme *</label>
+          <input
+            type="text"
+            placeholder="Ex: Baccalauréat STMG"
+            value={newFormation.diploma}
+            onChange={(e) => setNewFormation({ ...newFormation, diploma: e.target.value })}
+            className="w-full bg-[#0a0a0a] border border-[#404040] rounded-lg px-4 py-3 text-white focus:border-[#f59e0b] focus:outline-none"
+          />
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm text-gray-400 mb-2">Année début *</label>
+            <input
+              type="number"
+              min="2000"
+              max="2030"
+              value={newFormation.startYear}
+              onChange={(e) => setNewFormation({ ...newFormation, startYear: parseInt(e.target.value) })}
+              className="w-full bg-[#0a0a0a] border border-[#404040] rounded-lg px-4 py-3 text-white focus:border-[#f59e0b] focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="block text-sm text-gray-400 mb-2">Année fin *</label>
+            <input
+              type="number"
+              min="2000"
+              max="2030"
+              value={newFormation.endYear}
+              onChange={(e) => setNewFormation({ ...newFormation, endYear: parseInt(e.target.value) })}
+              className="w-full bg-[#0a0a0a] border border-[#404040] rounded-lg px-4 py-3 text-white focus:border-[#f59e0b] focus:outline-none"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="flex gap-3 mt-6">
+        <button
+          onClick={() => {
+            setShowFormationModal(false)
+            setNewFormation({
+              institution: '',
+              diploma: '',
+              startYear: new Date().getFullYear(),
+              endYear: new Date().getFullYear(),
+            })
+          }}
+          className="flex-1 px-6 py-3 bg-[#1a1a1a] text-white rounded-lg font-medium hover:bg-[#252525] transition border border-gray-700"
+        >
+          Annuler
+        </button>
+        <button
+          onClick={handleAddFormation}
+          disabled={!newFormation.institution || !newFormation.diploma}
+          className="flex-1 px-6 py-3 bg-[#f59e0b] text-black rounded-lg font-medium hover:bg-[#d97706] transition disabled:bg-gray-600 disabled:cursor-not-allowed"
+        >
+          Ajouter
+        </button>
+      </div>
+    </div>
+  </div>
+)}
             </div>
           )}
 
