@@ -391,6 +391,7 @@ const handleDeleteFormation = async (formationId: number) => {
     const file = e.target.files?.[0]
     if (!file) return
 
+    // Vérification de la taille du fichier (max 5 MB)
     if (file.size > 5 * 1024 * 1024) {
       alert('Fichier trop volumineux (max 5MB)')
       return
@@ -408,6 +409,8 @@ const handleDeleteFormation = async (formationId: number) => {
       
       reader.onload = async (event) => {
         try {
+          
+          // Conversion du fichier en Base64
           const base64String = event.target?.result as string
 
           const response = await fetch(`${API_URL}/api/players/${playerId}/upload-photo`, {

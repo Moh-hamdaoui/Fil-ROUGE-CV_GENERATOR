@@ -32,13 +32,19 @@ export function ProfileStep() {
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
+
+      // Vérification de la taille du fichier (max 5 MB)
       if (file.size > 5 * 1024 * 1024) {
         alert('Fichier trop volumineux (max 5MB)')
         return
       }
+
+      // Conversion du fichier en Base64
       const reader = new FileReader()
       reader.onloadend = () => {
         const base64 = reader.result as string
+
+        // Mise à jour de l’aperçu de la photo à l’écran
         setPhotoPreview(base64)
         form.setValue('photo', base64)
       }
@@ -65,7 +71,8 @@ export function ProfileStep() {
       {/* Photo de profil */}
       <div className="flex justify-center">
         <label className="cursor-pointer group">
-          <div className="w-32 h-32 rounded-full border-2 border-dashed border-white/20 flex items-center justify-center overflow-hidden bg-white/5 hover:border-[#f59e0b] transition-all group-hover:bg-white/10">
+          <div className="w-32 h-32 rounded-full border-2 border-dashed border-white/20 flex items-center justify-center 
+          overflow-hidden bg-white/5 hover:border-[#f59e0b] transition-all group-hover:bg-white/10">
             {photoPreview ? (
               <img src={photoPreview} alt="Photo" className="w-full h-full object-cover" />
             ) : (
